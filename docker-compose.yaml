@@ -1,0 +1,57 @@
+services:
+  backend:
+    build:
+      context: "./backend"
+      dockerfile: Dockerfile
+    ports:
+      - 5010:5010
+    env_file:
+      - ./backend/.env
+    restart: unless-stopped
+    depends_on:
+      backend-db:
+        condition: service_healthy
+    networks:
+      appnet:
+
+  backend-db:
+    build:
+      context: ./backend/db
+      dockerfile: Dockerfile
+    ports:
+      - "5011:5432"
+    env_file:
+      - ./backend/db/.env
+    volumes:
+      - backend_db_volume:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin || exit 1"]
+      interval: 300s
+      retries: 3
+      start_period: 2s
+      timeout: 5s
+    networks:
+      appnet:
+
+  frontend:
+    build:
+      context: "./frontend"
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    env_file:
+      - ./frontend/.env
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      appnet:
+
+volumes:
+  backend_db_volume:
+
+networks:
+  appnet:
+    driver: bridge
