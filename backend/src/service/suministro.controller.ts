@@ -9,17 +9,17 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { HospedajeHospitalarioService } from './hospedaje.service';
-import { CreateHospedajeHospitalarioDto } from './dto/create-hospedaje.dto';
-import { UpdateHospedajeHospitalarioDto } from './dto/update-hospedaje.dto';
+import { CreateSuministroMedicamentoDto } from './dto/create-suministro.dto';
+import { UpdateSuministroMedicamentoDto } from './dto/update-suministro.dto';
+import { SuministroMedicamentoService } from './suministro.service';
 
-@ApiTags('HospedajeHospitalario')
-@Controller('hospedaje_hospitalario')
-export class HospedajeHospitalarioController {
-  constructor(private readonly service: HospedajeHospitalarioService) {}
+@ApiTags('SuministroMedicamento')
+@Controller('suministro-medicamento')
+export class SuministroMedicamentoController {
+  constructor(private readonly service: SuministroMedicamentoService) {}
 
   @Post()
-  create(@Body() dto: CreateHospedajeHospitalarioDto) {
+  create(@Body() dto: CreateSuministroMedicamentoDto) {
     return this.service.create(dto);
   }
 
@@ -36,7 +36,7 @@ export class HospedajeHospitalarioController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateHospedajeHospitalarioDto,
+    @Body() dto: UpdateSuministroMedicamentoDto,
   ) {
     return this.service.update(id, dto);
   }

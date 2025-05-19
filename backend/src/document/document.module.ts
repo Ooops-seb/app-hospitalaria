@@ -6,12 +6,13 @@ import { DocumentoTransaccional } from './entities/document.entity';
 import { Paciente } from 'src/patient/entities/patient.entity';
 import { FacturaController } from './factura.controller';
 import { Factura } from './entities/Factura.entity';
+import { FacturaService } from './factura.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([DocumentoTransaccional, Paciente, Factura]),
   ],
   controllers: [DocumentController, FacturaController],
-  providers: [DocumentService, FacturaController],
+  providers: [DocumentService, FacturaService],
 })
 export class DocumentModule {}
