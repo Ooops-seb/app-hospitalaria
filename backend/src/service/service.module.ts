@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ServiceService } from './service.service';
-import { ServiceController } from './service.controller';
 import { ProcedimientoMedico } from './entities/ProcedimientoMedico.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProcedimientoMedicoController } from './procedimiento-medico.controller';
@@ -29,7 +27,7 @@ import { SuministroMedicamentoService } from './suministro.service';
     ]),
   ],
   controllers: [
-    ServiceController,
+    // ServiceController,
     ProcedimientoMedicoController,
     AtencionMedicaController,
     ExamenLabController,
@@ -37,7 +35,7 @@ import { SuministroMedicamentoService } from './suministro.service';
     SuministroMedicamentoController,
   ],
   providers: [
-    ServiceService,
+    // ServiceService,
     ProcedimientoMedicoService,
     AtencionMedicaService,
     ExamenLabService,

@@ -17,9 +17,15 @@ export class LineaTransaccion {
   @ManyToOne(() => Factura, (factura) => factura.lineas)
   factura: Factura;
 
-  @ManyToOne(() => Producto, (producto) => producto.lineas)
-  producto: Producto;
+  @ManyToOne(() => Servicio, (servicio) => servicio.lineas, {
+    nullable: true,
+    eager: true,
+  })
+  servicio: Servicio | null;
 
-  @ManyToOne(() => Servicio, (servicio) => servicio.lineas)
-  servicio: Servicio;
+  @ManyToOne(() => Producto, (producto) => producto.lineas, {
+    nullable: true,
+    eager: true,
+  })
+  producto: Producto | null;
 }
