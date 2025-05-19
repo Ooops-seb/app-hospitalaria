@@ -1,26 +1,48 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePatientDto } from './dto/create-patient.dto';
-import { UpdatePatientDto } from './dto/update-patient.dto';
+import { CreatePacienteDto } from './dto/create-patient.dto';
+import { UpdatePacienteDto } from './dto/update-patient.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Paciente } from './entities/patient.entity';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class PatientService {
-  create(createPatientDto: CreatePatientDto) {
-    return 'This action adds a new patient';
+  constructor(
+    @InjectRepository(Paciente)
+    private pacienteRepository: Repository<Paciente>,
+  ) {}
+
+  async create(createPacienteDto: CreatePacienteDto): Promise<Paciente> {
+    const paciente = this.pacienteRepository.create(createPacienteDto);
+    return this.pacienteRepository.save(paciente);
   }
 
-  findAll() {
-    return `This action returns all patient`;
+  async findAll(): Promise<Paciente[]> {
+    return this.pacienteRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} patient`;
+  async findOne(id: number): Promise<Paciente> {
+    const paciente = await this.pacienteRepository.findOneBy({ id });
+    if (!paciente) {
+      throw new NotFoundError(`Paciente with id ${id} not found`);
+    }
+    return paciente;
   }
 
-  update(id: number, updatePatientDto: UpdatePatientDto) {
-    return `This action updates a #${id} patient`;
+  async update(
+    id: number,
+    updatePacienteDto: UpdatePacienteDto,
+  ): Promise<Paciente> {
+    await this.pacienteRepository.update(id, updatePacienteDto);
+    const paciente = await this.pacienteRepository.findOneBy({ id });
+    if (!paciente) {
+      throw new NotFoundError(`Paciente with id ${id} not found after update`);
+    }
+    return paciente;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} patient`;
+  async remove(id: number): Promise<void> {
+    await this.pacienteRepository.delete(id);
   }
 }

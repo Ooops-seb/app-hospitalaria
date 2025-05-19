@@ -1,34 +1,45 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { PatientService } from './patient.service';
-import { CreatePatientDto } from './dto/create-patient.dto';
-import { UpdatePatientDto } from './dto/update-patient.dto';
+import { CreatePacienteDto } from './dto/create-patient.dto';
+import { UpdatePacienteDto } from './dto/update-patient.dto';
 
 @Controller('patient')
 export class PatientController {
-  constructor(private readonly patientService: PatientService) {}
+  constructor(private readonly pacienteService: PatientService) {}
 
   @Post()
-  create(@Body() createPatientDto: CreatePatientDto) {
-    return this.patientService.create(createPatientDto);
+  create(@Body() createPacienteDto: CreatePacienteDto) {
+    return this.pacienteService.create(createPacienteDto);
   }
 
   @Get()
   findAll() {
-    return this.patientService.findAll();
+    return this.pacienteService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.patientService.findOne(+id);
+    return this.pacienteService.findOne(Number(id));
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePatientDto: UpdatePatientDto) {
-    return this.patientService.update(+id, updatePatientDto);
+  update(
+    @Param('id') id: string,
+    @Body() updatePacienteDto: UpdatePacienteDto,
+  ) {
+    return this.pacienteService.update(Number(id), updatePacienteDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.patientService.remove(+id);
+    return this.pacienteService.remove(Number(id));
   }
 }
