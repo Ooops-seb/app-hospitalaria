@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import databaseConfig from 'config/database.config';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -27,7 +25,5 @@ import { PatientModule } from './patient/patient.module';
     ProductModule,
     PatientModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

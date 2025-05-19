@@ -1,26 +1,64 @@
-import { Injectable } from '@nestjs/common';
-import { CreateDocumentDto } from './dto/create-document.dto';
-import { UpdateDocumentDto } from './dto/update-document.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateDocumentoTransaccionalDto } from './dto/create-document.dto';
+import { UpdateDocumentoTransaccionalDto } from './dto/update-document.dto';
+import { DocumentoTransaccional } from './entities/document.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Paciente } from 'src/patient/entities/patient.entity';
 
 @Injectable()
 export class DocumentService {
-  create(createDocumentDto: CreateDocumentDto) {
-    return 'This action adds a new document';
+  constructor(
+    @InjectRepository(DocumentoTransaccional)
+    private readonly documentoRepo: Repository<DocumentoTransaccional>,
+    @InjectRepository(Paciente)
+    private readonly pacienteRepo: Repository<Paciente>,
+  ) {}
+
+  async create(
+    dto: CreateDocumentoTransaccionalDto,
+  ): Promise<DocumentoTransaccional> {
+    const paciente = await this.pacienteRepo.findOneBy({ id: dto.paciente_id });
+    if (!paciente) {
+      throw new NotFoundException('Paciente no encontrado');
+    }
+    const documento = this.documentoRepo.create({
+      ...dto,
+      paciente,
+    });
+    return this.documentoRepo.save(documento);
   }
 
-  findAll() {
-    return `This action returns all document`;
+  findAll(): Promise<DocumentoTransaccional[]> {
+    return this.documentoRepo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} document`;
+  async findOne(id: number): Promise<DocumentoTransaccional> {
+    const doc = await this.documentoRepo.findOne({ where: { id } });
+    if (!doc) throw new NotFoundException('Documento no encontrado');
+    return doc;
   }
 
-  update(id: number, updateDocumentDto: UpdateDocumentDto) {
-    return `This action updates a #${id} document`;
+  async update(
+    id: number,
+    dto: UpdateDocumentoTransaccionalDto,
+  ): Promise<DocumentoTransaccional> {
+    const documento = await this.findOne(id);
+    if (dto.paciente_id !== undefined) {
+      const paciente = await this.pacienteRepo.findOneBy({
+        id: dto.paciente_id,
+      });
+      if (!paciente) {
+        throw new NotFoundException('Paciente no encontrado');
+      }
+      documento.paciente = paciente;
+    }
+    Object.assign(documento, dto);
+    return this.documentoRepo.save(documento);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} document`;
+  async remove(id: number): Promise<void> {
+    const doc = await this.findOne(id);
+    await this.documentoRepo.remove(doc);
   }
 }

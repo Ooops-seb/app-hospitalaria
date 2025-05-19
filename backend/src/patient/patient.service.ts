@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePacienteDto } from './dto/create-patient.dto';
 import { UpdatePacienteDto } from './dto/update-patient.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Paciente } from './entities/patient.entity';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class PatientService {
@@ -25,7 +24,7 @@ export class PatientService {
   async findOne(id: number): Promise<Paciente> {
     const paciente = await this.pacienteRepository.findOneBy({ id });
     if (!paciente) {
-      throw new NotFoundError(`Paciente with id ${id} not found`);
+      throw new NotFoundException(`Paciente with id ${id} not found`);
     }
     return paciente;
   }
@@ -37,7 +36,9 @@ export class PatientService {
     await this.pacienteRepository.update(id, updatePacienteDto);
     const paciente = await this.pacienteRepository.findOneBy({ id });
     if (!paciente) {
-      throw new NotFoundError(`Paciente with id ${id} not found after update`);
+      throw new NotFoundException(
+        `Paciente with id ${id} not found after update`,
+      );
     }
     return paciente;
   }

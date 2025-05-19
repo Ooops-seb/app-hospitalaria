@@ -22,7 +22,7 @@ export class DocumentoTransaccional {
   @Column('float')
   valor: number;
 
-  @ManyToOne(() => Paciente, (paciente) => paciente.documentos)
+  @ManyToOne(() => Paciente, (paciente) => paciente.documentos, { eager: true })
   paciente: Paciente;
 
   @OneToMany(() => Factura, (factura) => factura.documento)

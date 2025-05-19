@@ -1,14 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { DocumentService } from './document.service';
-import { CreateDocumentDto } from './dto/create-document.dto';
-import { UpdateDocumentDto } from './dto/update-document.dto';
+import { CreateDocumentoTransaccionalDto } from './dto/create-document.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { UpdateDocumentoTransaccionalDto } from './dto/update-document.dto';
 
-@Controller('document')
+@ApiTags('DocumentoTransaccional')
+@Controller('documento_transaccional')
 export class DocumentController {
   constructor(private readonly documentService: DocumentService) {}
 
   @Post()
-  create(@Body() createDocumentDto: CreateDocumentDto) {
+  create(@Body() createDocumentDto: CreateDocumentoTransaccionalDto) {
     return this.documentService.create(createDocumentDto);
   }
 
@@ -18,17 +29,20 @@ export class DocumentController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.documentService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDocumentDto: UpdateDocumentDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDocumentDto: UpdateDocumentoTransaccionalDto,
+  ) {
     return this.documentService.update(+id, updateDocumentDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.documentService.remove(+id);
   }
 }

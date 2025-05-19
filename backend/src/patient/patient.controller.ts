@@ -6,12 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { PatientService } from './patient.service';
 import { CreatePacienteDto } from './dto/create-patient.dto';
 import { UpdatePacienteDto } from './dto/update-patient.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('patient')
+@ApiTags('Paciente')
+@Controller('pacientes')
 export class PatientController {
   constructor(private readonly pacienteService: PatientService) {}
 
@@ -26,20 +29,20 @@ export class PatientController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.pacienteService.findOne(Number(id));
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updatePacienteDto: UpdatePacienteDto,
   ) {
     return this.pacienteService.update(Number(id), updatePacienteDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.pacienteService.remove(Number(id));
   }
 }
