@@ -30,10 +30,27 @@ export class FacturaService {
     return this.facturaRepo.find();
   }
 
+  // async findOne(id: number): Promise<Factura> {
+  //   const factura = await this.facturaRepo.findOne({ where: { id } });
+  //   if (!factura) throw new NotFoundException('Factura no encontrada');
+  //   return factura;
+  // }
   async findOne(id: number): Promise<Factura> {
-    const factura = await this.facturaRepo.findOne({ where: { id } });
+    const factura = await this.facturaRepo.findOne({
+      where: { id },
+      relations: {
+        documento: {
+          paciente: true, // paciente dentro de documento
+        },
+        lineas: {
+          producto: true,
+          servicio: true,
+        },
+      },
+    });
+
     if (!factura) throw new NotFoundException('Factura no encontrada');
-    return factura;
+    return factura as Factura;
   }
 
   async update(id: number, dto: UpdateFacturaDto): Promise<Factura> {
