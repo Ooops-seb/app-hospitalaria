@@ -63,13 +63,18 @@ export const appRoutes: AppRouter[] = mapRoutesWithUrls([
       {
         title: "Lista",
         icon: LayoutDashboard,
-        url: "/facturas",
+        url: "/facturas/lista",
       },
       {
         title: "Crear",
         icon: LayoutDashboard,
         url: "/facturas/crear",
       },
+      // {
+      //   title: "Detalle Factura",
+      //   icon: LayoutDashboard,
+      //   url: "/facturas/[id]",
+      // },
     ],
   },
   {
@@ -79,12 +84,81 @@ export const appRoutes: AppRouter[] = mapRoutesWithUrls([
       {
         title: "Lista",
         icon: LayoutDashboard,
-        url: "/paciente",
+        url: "/paciente/lista",
       },
       {
         title: "Crear",
         icon: LayoutDashboard,
         url: "/paciente/crear",
+      },
+    ],
+  },
+  {
+    title: "Documentos Transaccionales",
+    isDroppable: false,
+    routes: [
+      {
+        title: "Lista",
+        icon: LayoutDashboard,
+        url: "/doctransaccional/lista",
+      },
+      {
+        title: "Crear",
+        icon: LayoutDashboard,
+        url: "/doctransaccional/crear",
+      },
+    ],
+  },
+  {
+    title: "Linea de Transacción",
+    isDroppable: false,
+    routes: [
+      {
+        title: "Lista",
+        icon: LayoutDashboard,
+        url: "/linea/lista",
+      },
+      {
+        title: "Crear",
+        icon: LayoutDashboard,
+        url: "/linea/crear",
+      },
+    ],
+  },
+  {
+    title: "Servicios",
+    isDroppable: false,
+    routes: [
+      {
+        title: "Crear Procedimiento Medico",
+        icon: LayoutDashboard,
+        url: "/servicios/procedimiento_medico",
+      },
+      {
+        title: "Lista Procedimiento Medico",
+        icon: LayoutDashboard,
+        url: "/servicios/lista",
+      },
+      {
+        title: "Crear Suministros Medico",
+        icon: LayoutDashboard,
+        url: "/servicios/suministros",
+      },
+    ],
+  },
+  {
+    title: "Productos",
+    isDroppable: false,
+    routes: [
+      {
+        title: "Crear",
+        icon: LayoutDashboard,
+        url: "/productos/comida",
+      },
+      {
+        title: "Lista",
+        icon: LayoutDashboard,
+        url: "/productos/lista",
       },
     ],
   },
