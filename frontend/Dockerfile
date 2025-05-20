@@ -1,17 +1,23 @@
-FROM node:22-alpine
+FROM oven/bun:1.2.2 AS base
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+ENV NODE_ENV=production
 
-RUN npm install
+COPY package.json bun.lock ./
 
-COPY . .
+RUN bun install --frozen-lockfile
 
-RUN npm run build
+FROM oven/bun:1.2.2 AS release
+
+COPY --from=base /usr/src/app/node_modules node_modules
+
+COPY  . .
+
+RUN bun --bun run build
 
 ARG SERVER_PORT
 
 EXPOSE ${SERVER_PORT}
 
-CMD ["npm", "run", "start"]
+CMD ["bun", "--bun", "run", "start"]

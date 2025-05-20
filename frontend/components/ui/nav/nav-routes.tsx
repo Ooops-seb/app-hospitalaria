@@ -41,6 +41,7 @@ export function NavRoutes({ router }: { router: AppRouter[] }) {
     });
 
     setOpenCategories(activeCategories);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path]);
 
   const toggleCategory = (category: string) => {

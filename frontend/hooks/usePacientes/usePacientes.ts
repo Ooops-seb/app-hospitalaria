@@ -12,6 +12,7 @@ export interface Paciente {
 
 export function usePacientes() {
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetch = async () => {
@@ -20,11 +21,13 @@ export function usePacientes() {
         setPacientes(res.data);
       } catch (error) {
         console.error("Error al cargar pacientes", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetch();
   }, []);
 
-  return { pacientes };
+  return { pacientes, loading };
 }
