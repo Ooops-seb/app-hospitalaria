@@ -1,4 +1,4 @@
-import { LineaTransaccion } from 'src/line/entities/line.entity';
+import { LineaTransaccion } from 'src/line/entities/LineaTransaccion.entity';
 import {
   Column,
   Entity,

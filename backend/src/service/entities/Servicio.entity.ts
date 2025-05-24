@@ -1,4 +1,5 @@
-import { LineaTransaccion } from 'src/line/entities/line.entity';
+import { EstadosEnum } from 'common/enums/Estado.enum';
+import { LineaTransaccion } from 'src/line/entities/LineaTransaccion.entity';
 import {
   Column,
   Entity,
@@ -24,4 +25,11 @@ export class Servicio {
 
   @OneToMany(() => LineaTransaccion, (linea) => linea.servicio)
   lineas: LineaTransaccion[];
+
+  @Column({
+    type: 'enum',
+    enum: EstadosEnum,
+    default: EstadosEnum.DEFAULT,
+  })
+  estado: EstadosEnum;
 }
