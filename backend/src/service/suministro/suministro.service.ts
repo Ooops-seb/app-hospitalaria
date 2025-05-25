@@ -4,13 +4,16 @@ import { Repository } from 'typeorm';
 import { SuministroMedicamento } from './entities/SuministroMedicamento.entity';
 import { CreateSuministroMedicamentoDto } from './dto/create-suministro.dto';
 import { UpdateSuministroMedicamentoDto } from './dto/update-suministro.dto';
+import { ServicioService } from '../service.service';
 
 @Injectable()
-export class SuministroMedicamentoService {
+export class SuministroMedicamentoService extends ServicioService {
   constructor(
     @InjectRepository(SuministroMedicamento)
     private readonly suministroRepo: Repository<SuministroMedicamento>,
-  ) {}
+  ) {
+    super(suministroRepo);
+  }
 
   create(dto: CreateSuministroMedicamentoDto): Promise<SuministroMedicamento> {
     const entity = this.suministroRepo.create(dto);

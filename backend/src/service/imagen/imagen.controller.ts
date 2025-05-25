@@ -12,11 +12,15 @@ import { ApiTags } from '@nestjs/swagger';
 import { CreateImagenRayosXDto } from './dto/create-imagen.dto';
 import { UpdateImagenRayosXDto } from './dto/update-imagen.dto';
 import { ImagenService } from './imagen.service';
+import { ServicioController } from '../service.controller';
+import { ServicioService } from '../service.service';
 
 @ApiTags('ImagenRayosX')
 @Controller()
-export class ImagenRayosXController {
-  constructor(private readonly service: ImagenService) {}
+export class ImagenRayosXController extends ServicioController {
+  constructor(private readonly service: ImagenService) {
+    super(service as ServicioService);
+  }
 
   @Post()
   create(@Body() dto: CreateImagenRayosXDto) {

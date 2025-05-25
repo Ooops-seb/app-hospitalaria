@@ -10,10 +10,14 @@ import {
 import { DescargoService } from './descargo.service';
 import { CreateDescargoDto } from './dto/create-descargo.dto';
 import { UpdateDescargoDto } from './dto/update-descargo.dto';
+import { DocumentController } from '../document.controller';
+import { DocumentService } from '../document.service';
 
 @Controller()
-export class DescargoController {
-  constructor(private readonly descargoService: DescargoService) {}
+export class DescargoController extends DocumentController {
+  constructor(private readonly descargoService: DescargoService) {
+    super(descargoService as unknown as DocumentService);
+  }
 
   @Post()
   create(@Body() createDescargoDto: CreateDescargoDto) {

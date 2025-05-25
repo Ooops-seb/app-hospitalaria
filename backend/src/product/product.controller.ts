@@ -1,13 +1,13 @@
 import { Body, Param, Patch, ParseIntPipe } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { ChangeStatusDto } from './common/dtos/change-status.dto';
-import { ServicioService } from './service.service';
+import { ChangeStatusDto } from '../service/common/dtos/change-status.dto';
+import { ProductService } from './product.service';
 
-export class ServicioController {
-  constructor(protected readonly servicioService: ServicioService) {}
+export class ProductController {
+  constructor(protected readonly productService: ProductService) {}
 
   @Patch(':id/cambiar-estado')
-  @ApiOperation({ summary: 'Cambiar estado del servicio' })
+  @ApiOperation({ summary: 'Cambiar estado del producto' })
   @ApiResponse({
     status: 200,
     description: 'Estado actualizado correctamente.',
@@ -16,6 +16,6 @@ export class ServicioController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: ChangeStatusDto,
   ) {
-    return this.servicioService.changeStatus({ id, dto });
+    return this.productService.changeStatus(id, dto);
   }
 }

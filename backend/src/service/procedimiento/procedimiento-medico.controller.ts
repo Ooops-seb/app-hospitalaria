@@ -12,11 +12,15 @@ import { ApiTags } from '@nestjs/swagger';
 import { CreateProcedimientoMedicoDto } from './dto/create-procedimiento-medico.dto';
 import { UpdateProcedimientoMedicoDto } from './dto/update-procedimiento-medico.dto';
 import { ProcedimientoMedicoService } from './procedimiento-medico.service';
+import { ServicioController } from '../service.controller';
+import { ServicioService } from '../service.service';
 
 @ApiTags('Procedimiento Medico')
 @Controller()
-export class ProcedimientoMedicoController {
-  constructor(private readonly service: ProcedimientoMedicoService) {}
+export class ProcedimientoMedicoController extends ServicioController {
+  constructor(private readonly service: ProcedimientoMedicoService) {
+    super(service as ServicioService);
+  }
 
   @Post()
   create(@Body() dto: CreateProcedimientoMedicoDto) {

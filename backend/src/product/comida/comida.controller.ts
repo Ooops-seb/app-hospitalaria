@@ -11,10 +11,14 @@ import {
 import { ComidaService } from './comida.service';
 import { CreateComidaDto } from './dto/create-comida.dto';
 import { UpdateComidaDto } from './dto/update-comida.dto';
+import { ProductController } from '../product.controller';
+import { ProductService } from '../product.service';
 
 @Controller()
-export class ComidaController {
-  constructor(private readonly service: ComidaService) {}
+export class ComidaController extends ProductController {
+  constructor(private readonly service: ComidaService) {
+    super(service as ProductService);
+  }
 
   @Post()
   create(@Body() dto: CreateComidaDto) {
