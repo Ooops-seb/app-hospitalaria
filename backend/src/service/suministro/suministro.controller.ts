@@ -9,12 +9,12 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { SuministroMedicamentoService } from './suministro.service';
 import { CreateSuministroMedicamentoDto } from './dto/create-suministro.dto';
 import { UpdateSuministroMedicamentoDto } from './dto/update-suministro.dto';
-import { SuministroMedicamentoService } from './suministro.service';
 
 @ApiTags('SuministroMedicamento')
-@Controller('suministro-medicamento')
+@Controller()
 export class SuministroMedicamentoController {
   constructor(private readonly suministro: SuministroMedicamentoService) {}
 

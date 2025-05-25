@@ -1,5 +1,5 @@
+import { Servicio } from 'src/service/entities/Servicio.entity';
 import { ChildEntity, Column } from 'typeorm';
-import { Servicio } from './Servicio.entity';
 
 @ChildEntity()
 export class AtencionMedica extends Servicio {

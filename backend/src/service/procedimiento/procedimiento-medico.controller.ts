@@ -9,17 +9,17 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateExamenLabDto } from './dto/create-examen-lab.dto';
-import { UpdateExamenLabDto } from './dto/update-examen-lab.dto';
-import { ExamenLabService } from './examen-lab.service';
+import { CreateProcedimientoMedicoDto } from './dto/create-procedimiento-medico.dto';
+import { UpdateProcedimientoMedicoDto } from './dto/update-procedimiento-medico.dto';
+import { ProcedimientoMedicoService } from './procedimiento-medico.service';
 
-@ApiTags('ExamenLab')
-@Controller('examen-lab')
-export class ExamenLabController {
-  constructor(private readonly service: ExamenLabService) {}
+@ApiTags('Procedimiento Medico')
+@Controller()
+export class ProcedimientoMedicoController {
+  constructor(private readonly service: ProcedimientoMedicoService) {}
 
   @Post()
-  create(@Body() dto: CreateExamenLabDto) {
+  create(@Body() dto: CreateProcedimientoMedicoDto) {
     return this.service.create(dto);
   }
 
@@ -36,7 +36,7 @@ export class ExamenLabController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateExamenLabDto,
+    @Body() dto: UpdateProcedimientoMedicoDto,
   ) {
     return this.service.update(id, dto);
   }

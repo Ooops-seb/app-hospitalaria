@@ -14,7 +14,7 @@ import { UpdateImagenRayosXDto } from './dto/update-imagen.dto';
 import { ImagenService } from './imagen.service';
 
 @ApiTags('ImagenRayosX')
-@Controller('imagen-rayosx')
+@Controller()
 export class ImagenRayosXController {
   constructor(private readonly service: ImagenService) {}
 

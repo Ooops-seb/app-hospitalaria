@@ -1,5 +1,5 @@
+import { Servicio } from 'src/service/entities/Servicio.entity';
 import { Column, ChildEntity } from 'typeorm';
-import { Servicio } from './Servicio.entity';
 
 @ChildEntity()
 export class ImagenRayosX extends Servicio {
