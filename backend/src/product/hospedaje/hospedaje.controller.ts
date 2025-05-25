@@ -1,20 +1,20 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  Param,
-  ParseIntPipe,
-  Patch,
   Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { HospedajeHospitalarioService } from './hospedaje.service';
 import { CreateHospedajeHospitalarioDto } from './dto/create-hospedaje.dto';
 import { UpdateHospedajeHospitalarioDto } from './dto/update-hospedaje.dto';
+import { HospedajeHospitalarioService } from './hospedaje.service';
 
 @ApiTags('HospedajeHospitalario')
-@Controller('hospedaje_hospitalario')
+@Controller()
 export class HospedajeHospitalarioController {
   constructor(private readonly service: HospedajeHospitalarioService) {}
 

@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { HospedajeHospitalario } from './entities/HospedajeHospitalario.entity';
-import { UpdateHospedajeHospitalarioDto } from './dto/update-hospedaje.dto';
 import { Repository } from 'typeorm';
+import { HospedajeHospitalario } from './entities/hospedaje.entity';
 import { CreateHospedajeHospitalarioDto } from './dto/create-hospedaje.dto';
+import { UpdateHospedajeHospitalarioDto } from './dto/update-hospedaje.dto';
 
 @Injectable()
 export class HospedajeHospitalarioService {

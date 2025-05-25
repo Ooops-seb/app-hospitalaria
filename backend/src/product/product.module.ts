@@ -1,15 +1,27 @@
 import { Module } from '@nestjs/common';
-import { ComidaService } from './comida.service';
-import { ComidaController } from './comida.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Comida } from './entities/Comida.entity';
-import { HospedajeHospitalario } from './entities/HospedajeHospitalario.entity';
-import { HospedajeHospitalarioController } from './hospedaje.controller';
-import { HospedajeHospitalarioService } from './hospedaje.service';
+import { ComidaModule } from './comida/comida.module';
+import { HospedajeModule } from './hospedaje/hospedaje.module';
+import { RouterModule } from '@nestjs/core';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Comida, HospedajeHospitalario])],
-  controllers: [ComidaController, HospedajeHospitalarioController],
-  providers: [ComidaService, HospedajeHospitalarioService],
+  imports: [
+    RouterModule.register([
+      {
+        path: 'productos',
+        children: [
+          {
+            path: 'comida',
+            module: ComidaModule,
+          },
+          {
+            path: 'hospedaje',
+            module: HospedajeModule,
+          },
+        ],
+      },
+    ]),
+    ComidaModule,
+    HospedajeModule,
+  ],
 })
 export class ProductModule {}

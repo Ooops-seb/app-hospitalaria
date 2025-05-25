@@ -1,20 +1,18 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  Param,
-  ParseIntPipe,
-  Patch,
   Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ComidaService } from './comida.service';
 import { CreateComidaDto } from './dto/create-comida.dto';
 import { UpdateComidaDto } from './dto/update-comida.dto';
-import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags('Comida')
-@Controller('comida')
+@Controller()
 export class ComidaController {
   constructor(private readonly service: ComidaService) {}
 

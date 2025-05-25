@@ -1,5 +1,5 @@
+import { Producto } from 'src/product/entities/Producto.entity';
 import { ChildEntity, Column } from 'typeorm';
-import { Producto } from './product.entity';
 
 @ChildEntity()
 export class HospedajeHospitalario extends Producto {

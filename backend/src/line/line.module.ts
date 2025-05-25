@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Producto } from 'src/product/entities/product.entity';
+import { Producto } from 'src/product/entities/Producto.entity';
 import { Servicio } from 'src/service/entities/Servicio.entity';
 import { LineaTransaccion } from './entities/LineaTransaccion.entity';
 import { LineaTransaccionController } from './linea-transaccion.controller';
