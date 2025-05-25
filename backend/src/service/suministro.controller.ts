@@ -16,21 +16,21 @@ import { SuministroMedicamentoService } from './suministro.service';
 @ApiTags('SuministroMedicamento')
 @Controller('suministro-medicamento')
 export class SuministroMedicamentoController {
-  constructor(private readonly service: SuministroMedicamentoService) {}
+  constructor(private readonly suministro: SuministroMedicamentoService) {}
 
   @Post()
   create(@Body() dto: CreateSuministroMedicamentoDto) {
-    return this.service.create(dto);
+    return this.suministro.create(dto);
   }
 
   @Get()
   findAll() {
-    return this.service.findAll();
+    return this.suministro.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.service.findOne(id);
+    return this.suministro.findOne(id);
   }
 
   @Patch(':id')
@@ -38,11 +38,11 @@ export class SuministroMedicamentoController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateSuministroMedicamentoDto,
   ) {
-    return this.service.update(id, dto);
+    return this.suministro.update(id, dto);
   }
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.service.remove(id);
+    return this.suministro.remove(id);
   }
 }

@@ -27,7 +27,6 @@ import { SuministroMedicamentoService } from './suministro.service';
     ]),
   ],
   controllers: [
-    // ServiceController,
     ProcedimientoMedicoController,
     AtencionMedicaController,
     ExamenLabController,
@@ -35,7 +34,6 @@ import { SuministroMedicamentoService } from './suministro.service';
     SuministroMedicamentoController,
   ],
   providers: [
-    // ServiceService,
     ProcedimientoMedicoService,
     AtencionMedicaService,
     ExamenLabService,
