@@ -1,7 +1,7 @@
 import { ChildEntity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
-import { Factura } from './Factura.entity';
 import { LineaDescargo } from 'src/line/entities/LineaDescargo.entity';
-import { Documento } from './Documento.entity';
+import { Documento } from 'src/document/entities/Documento.entity';
+import { Factura } from 'src/document/factura/entities/factura.entity';
 
 @ChildEntity()
 export class Descargo extends Documento {

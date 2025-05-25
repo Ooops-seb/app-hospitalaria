@@ -1,6 +1,6 @@
+import { Documento } from 'src/document/entities/Documento.entity';
 import { LineaFactura } from 'src/line/entities/LineaFactura.entity';
 import { ChildEntity, Column, OneToMany } from 'typeorm';
-import { Documento } from './Documento.entity';
 
 @ChildEntity()
 export class Factura extends Documento {
