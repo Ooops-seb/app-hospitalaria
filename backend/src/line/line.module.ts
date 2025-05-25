@@ -1,17 +1,8 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Producto } from 'src/product/entities/Producto.entity';
-import { Servicio } from 'src/service/entities/Servicio.entity';
-import { LineaTransaccion } from './entities/LineaTransaccion.entity';
-import { LineaTransaccionController } from './linea-transaccion.controller';
-import { LineaTransaccionService } from './linea-transaccion.service';
-import { Factura } from 'src/document/factura/entities/factura.entity';
+import { DescargoModule } from './descargo/descargo.module';
+import { FacturaModule } from './factura/factura.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([LineaTransaccion, Factura, Producto, Servicio]),
-  ],
-  controllers: [LineaTransaccionController],
-  providers: [LineaTransaccionService],
+  imports: [DescargoModule, FacturaModule],
 })
 export class LineModule {}

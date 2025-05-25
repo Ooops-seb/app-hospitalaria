@@ -1,7 +1,6 @@
 import { Producto } from 'src/product/entities/Producto.entity';
 import { Servicio } from 'src/service/entities/Servicio.entity';
 import {
-  Column,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -16,16 +15,11 @@ export class LineaTransaccion {
 
   @ManyToOne(() => Servicio, (servicio) => servicio.lineas, {
     nullable: true,
-    eager: true,
   })
   servicio: Servicio;
 
   @ManyToOne(() => Producto, (producto) => producto.lineas, {
     nullable: true,
-    eager: true,
   })
   producto: Producto;
-
-  @Column({ type: 'float' })
-  total: number;
 }

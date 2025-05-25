@@ -2,12 +2,11 @@ import { Module } from '@nestjs/common';
 import { FacturaService } from './factura.service';
 import { FacturaController } from './factura.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Factura } from './entities/factura.entity';
-import { Documento } from '../entities/Documento.entity';
-import { LineaFactura } from 'src/line/factura/entities/factura.entity';
+import { LineaFactura } from './entities/factura.entity';
+import { LineaTransaccion } from '../entities/LineaTransaccion.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Factura, LineaFactura, Documento])],
+  imports: [TypeOrmModule.forFeature([LineaFactura, LineaTransaccion])],
   controllers: [FacturaController],
   providers: [FacturaService],
 })
