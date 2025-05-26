@@ -4,16 +4,13 @@ import { Repository } from 'typeorm';
 import { CreateImagenRayosXDto } from './dto/create-imagen.dto';
 import { UpdateImagenRayosXDto } from './dto/update-imagen.dto';
 import { ImagenRayosX } from './entities/ImagenRayosX.entity';
-import { ServicioService } from '../service.service';
 
 @Injectable()
-export class ImagenService extends ServicioService {
+export class ImagenService {
   constructor(
     @InjectRepository(ImagenRayosX)
     private readonly imagenRepo: Repository<ImagenRayosX>,
-  ) {
-    super(imagenRepo);
-  }
+  ) {}
 
   create(dto: CreateImagenRayosXDto): Promise<ImagenRayosX> {
     const entity = this.imagenRepo.create(dto);

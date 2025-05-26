@@ -1,3 +1,4 @@
+import { EstadosEnum } from 'common/enums/Estado.enum';
 import { Producto } from 'src/product/entities/Producto.entity';
 import { Servicio } from 'src/service/entities/Servicio.entity';
 import {
@@ -5,6 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   TableInheritance,
+  Column,
 } from 'typeorm';
 
 @Entity()
@@ -22,4 +24,11 @@ export class LineaTransaccion {
     nullable: true,
   })
   producto: Producto;
+
+  @Column({
+    type: 'enum',
+    enum: EstadosEnum,
+    default: EstadosEnum.DEFAULT,
+  })
+  estado: EstadosEnum;
 }

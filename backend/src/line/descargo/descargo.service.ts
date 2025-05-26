@@ -5,9 +5,10 @@ import { CreateLineaDescargoDto } from './dto/create-lineadescargo.dto';
 import { Producto } from 'src/product/entities/Producto.entity';
 import { Servicio } from 'src/service/entities/Servicio.entity';
 import { LineaDescargo } from './entities/descargo.entity';
+import { LineaTransaccionService } from '../linea-transaccion.service';
 
 @Injectable()
-export class DescargoService {
+export class DescargoService extends LineaTransaccionService {
   constructor(
     @InjectRepository(LineaDescargo)
     private readonly lineaDescargoRepo: Repository<LineaDescargo>,
@@ -15,7 +16,9 @@ export class DescargoService {
     private readonly productoRepo: Repository<Producto>,
     @InjectRepository(Servicio)
     private readonly servicioRepo: Repository<Servicio>,
-  ) {}
+  ) {
+    super(lineaDescargoRepo);
+  }
 
   async createMany(
     lineas: CreateLineaDescargoDto[],

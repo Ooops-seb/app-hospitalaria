@@ -4,16 +4,13 @@ import { UpdateComidaDto } from './dto/update-comida.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comida } from './entities/comida.entity';
-import { ProductService } from '../product.service';
 
 @Injectable()
-export class ComidaService extends ProductService {
+export class ComidaService {
   constructor(
     @InjectRepository(Comida)
     private readonly comidaRepo: Repository<Comida>,
-  ) {
-    super(comidaRepo);
-  }
+  ) {}
 
   create(dto: CreateComidaDto): Promise<Comida> {
     const comida = this.comidaRepo.create(dto);

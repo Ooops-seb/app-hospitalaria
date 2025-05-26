@@ -4,16 +4,13 @@ import { Repository } from 'typeorm';
 import { CreateExamenLabDto } from './dto/create-examen-lab.dto';
 import { UpdateExamenLabDto } from './dto/update-examen-lab.dto';
 import { ExamenLab } from './entities/ExamenLab.entity';
-import { ServicioService } from '../service.service';
 
 @Injectable()
-export class ExamenLabService extends ServicioService {
+export class ExamenLabService {
   constructor(
     @InjectRepository(ExamenLab)
     private readonly examenRepo: Repository<ExamenLab>,
-  ) {
-    super(examenRepo);
-  }
+  ) {}
 
   create(dto: CreateExamenLabDto): Promise<ExamenLab> {
     const entity = this.examenRepo.create(dto);

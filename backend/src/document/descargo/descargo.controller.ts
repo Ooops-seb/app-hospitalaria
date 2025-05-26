@@ -1,15 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { DescargoService } from './descargo.service';
 import { CreateDescargoDto } from './dto/create-descargo.dto';
-import { UpdateDescargoDto } from './dto/update-descargo.dto';
 import { DocumentController } from '../document.controller';
 import { DocumentService } from '../document.service';
 
@@ -32,18 +23,5 @@ export class DescargoController extends DocumentController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.descargoService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateDescargoDto: UpdateDescargoDto,
-  ) {
-    return this.descargoService.update(+id, updateDescargoDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.descargoService.remove(+id);
   }
 }
