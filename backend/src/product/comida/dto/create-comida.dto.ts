@@ -12,7 +12,7 @@ export class CreateComidaDto {
 
   @ApiProperty({ example: 'Alto en fibra' })
   @IsString()
-  valorNutri: string;
+  valor_nutri: string;
 
   @ApiProperty({ example: 'Vegetariana' })
   @IsString()

@@ -8,6 +8,9 @@ import { Documento } from '../entities/Documento.entity';
 import { LineaDescargo } from 'src/line/descargo/entities/descargo.entity';
 import { Paciente } from 'src/patient/entities/patient.entity';
 import { DescargoModule as LineaDescargoModule } from 'src/line/descargo/descargo.module';
+import { FacturaService } from 'src/line/factura/factura.service';
+import { FacturaModule as LineaFacturaModule } from 'src/line/factura/factura.module';
+import { LineaFactura } from 'src/line/factura/entities/factura.entity';
 
 @Module({
   imports: [
@@ -17,10 +20,12 @@ import { DescargoModule as LineaDescargoModule } from 'src/line/descargo/descarg
       Documento,
       LineaDescargo,
       Paciente,
+      LineaFactura,
     ]),
     forwardRef(() => LineaDescargoModule),
+    forwardRef(() => LineaFacturaModule),
   ],
   controllers: [DescargoController],
-  providers: [DescargoService],
+  providers: [DescargoService, FacturaService],
 })
 export class DescargoModule {}

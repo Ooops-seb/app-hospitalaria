@@ -4,13 +4,16 @@ import { LineaTransaccion } from 'src/line/entities/LineaTransaccion.entity';
 
 @ChildEntity()
 export class LineaFactura extends LineaTransaccion {
-  @Column()
+  @Column({ nullable: true, default: 1 })
+  cantidad: number;
+
+  @Column({ type: 'float', nullable: true, default: 0 })
   iva: number;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'float', nullable: true, default: 0 })
   subtotal: number;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'float', nullable: true, default: 0 })
   descuento: number;
 
   @ManyToOne(() => Factura, (factura) => factura.lineas)
