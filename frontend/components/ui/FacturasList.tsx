@@ -10,7 +10,7 @@ import {
   TableCell,
 } from "@/components/shadcn/ui/table";
 import { useEffect, useState } from "react";
-import { obtenerDescargos } from "@/lib/api/descargos";
+import { obtenerFacturas } from "@/lib/api/facturas";
 import {
   Card,
   CardContent,
@@ -19,32 +19,33 @@ import {
 } from "@/components/shadcn/ui/card";
 import Link from "next/link";
 
-export default function DescargosList() {
-  const [descargos, setDescargos] = useState<any[]>([]);
+export default function FacturasList() {
+  const [facturas, setFacturas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDescargos = async () => {
+    const fetchFacturas = async () => {
       try {
-        const data = await obtenerDescargos();
-        setDescargos(data);
+        const data = await obtenerFacturas();
+        // Ordenar por id descendente
+        setFacturas(data.sort((a: any, b: any) => a.id - b.id));
       } catch (error) {
-        console.error("Error al cargar descargos", error);
+        console.error("Error al cargar facturas", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchDescargos();
+    fetchFacturas();
   }, []);
 
-  if (loading) return <p>Cargando descargos...</p>;
-  if (!descargos.length) return <p>No hay descargos registrados.</p>;
+  if (loading) return <p>Cargando facturas...</p>;
+  if (!facturas.length) return <p>No hay facturas registradas.</p>;
 
   return (
     <div className="p-4">
       <Card>
         <CardHeader>
-          <CardTitle>Listado de Descargos</CardTitle>
+          <CardTitle>Listado de Facturas</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -57,26 +58,28 @@ export default function DescargosList() {
                 <TableHead>Paciente</TableHead>
                 <TableHead>Líneas</TableHead>
                 <TableHead>Estado</TableHead>
+                <TableHead>Clave Acceso</TableHead>
+                <TableHead>Total</TableHead>
                 <TableHead>Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {descargos.map((descargo) => (
-                <TableRow key={descargo.id}>
-                  <TableCell>{descargo.id}</TableCell>
-                  <TableCell>{descargo.fecha}</TableCell>
-                  <TableCell>{descargo.cliente}</TableCell>
-                  <TableCell>{descargo.direccion}</TableCell>
+              {facturas.map((factura) => (
+                <TableRow key={factura.id}>
+                  <TableCell>{factura.id}</TableCell>
+                  <TableCell>{factura.fecha}</TableCell>
+                  <TableCell>{factura.cliente}</TableCell>
+                  <TableCell>{factura.direccion}</TableCell>
                   <TableCell>
-                    {descargo.paciente
-                      ? `${descargo.paciente.nombres} ${descargo.paciente.apellidos}`
+                    {factura.paciente
+                      ? `${factura.paciente.nombres} ${factura.paciente.apellidos}`
                       : "-"}
                   </TableCell>
                   <TableCell>
                     {(() => {
                       let servicios = 0;
                       let productos = 0;
-                      descargo.lineas?.forEach((linea: any) => {
+                      factura.lineas?.forEach((linea: any) => {
                         if (linea.servicio && linea.servicio.id) servicios++;
                         if (linea.producto && linea.producto.id) productos++;
                       });
@@ -93,10 +96,12 @@ export default function DescargosList() {
                       );
                     })()}
                   </TableCell>
-                  <TableCell>{descargo.estado}</TableCell>
+                  <TableCell>{factura.estado}</TableCell>
+                  <TableCell>{factura.clave_acceso}</TableCell>
+                  <TableCell>${factura.total?.toFixed(2) ?? 0}</TableCell>
                   <TableCell>
                     <Link
-                      href={`/platform/descargos/${descargo.id}`}
+                      href={`/platform/facturas/${factura.id}`}
                       className="inline-flex items-center px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm"
                     >
                       Ver detalle

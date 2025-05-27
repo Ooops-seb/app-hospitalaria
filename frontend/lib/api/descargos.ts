@@ -4,6 +4,8 @@ export interface LineaDescargo {
   servicio_id?: number;
   producto_id?: number;
   nota_venta: string;
+  id?: number;
+  estado?: string;
 }
 
 export interface DescargoFormData {
@@ -13,6 +15,39 @@ export interface DescargoFormData {
   paciente_id: number;
   lineas: LineaDescargo[];
 }
+
+export const clonarParaFactura = async (
+  id: number,
+  data: {
+    clave_acceso: string;
+  },
+) => {
+  const response = await api.post(
+    `/documentos/descargo/${id}/clonar-a-factura`,
+    data,
+  );
+  return response.data;
+};
+
+export const actualizarEstadoLineaDescargo = async (id: number) => {
+  const response = await api.patch(
+    `/transacciones/descargo/linea-descargo/${id}/cambiar-estado`,
+    {
+      estado: "descargado",
+    },
+  );
+  return response.data;
+};
+
+export const actualizarEstadoDescargo = async (id: number) => {
+  const response = await api.patch(
+    `/documentos/descargo/${id}/cambiar-estado`,
+    {
+      estado: "descargado",
+    },
+  );
+  return response.data;
+};
 
 export const actualizarDescargo = async (
   id: number,

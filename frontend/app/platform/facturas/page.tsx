@@ -1,5 +1,5 @@
-import ComidaList from "@/components/ui/ProductosList";
+import FacturasList from "@/components/ui/FacturasList";
 
 export default function ComidaPage() {
-  return <ComidaList />;
+  return <FacturasList />;
 }

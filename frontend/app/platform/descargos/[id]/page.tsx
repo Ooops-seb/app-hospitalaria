@@ -35,9 +35,25 @@ import { obtenerPacientes } from "@/lib/api/pacientes";
 import { obtenerServicios } from "@/lib/api/servicios";
 import { obtenerProductos } from "@/lib/api/producto";
 import { DescargoFormData, LineaDescargo } from "@/lib/api/descargos";
-import { obtenerDescargosById, actualizarDescargo } from "@/lib/api/descargos";
+import {
+  obtenerDescargosById,
+  actualizarDescargo,
+  clonarParaFactura,
+  actualizarEstadoLineaDescargo,
+  actualizarEstadoDescargo,
+} from "@/lib/api/descargos";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetFooter,
+  SheetDescription,
+  SheetClose,
+  SheetTrigger,
+} from "@/components/shadcn/ui/sheet";
 
 const getServiceTypeColor = (tipo: string) => {
   const colors = {
@@ -89,6 +105,31 @@ export default function DescargoForm() {
   const [productosLoading, setProductosLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [facturaModalOpen, setFacturaModalOpen] = useState(false);
+  const [claveAcceso, setClaveAcceso] = useState("");
+  const [facturaLoading, setFacturaLoading] = useState(false);
+  const [lineaEstadoModal, setLineaEstadoModal] = useState<{
+    open: boolean;
+    index: number | null;
+  }>({
+    open: false,
+    index: null,
+  });
+  const [cambiandoEstado, setCambiandoEstado] = useState(false);
+
+  // Error modal state
+  const [errorModal, setErrorModal] = useState<{
+    open: boolean;
+    message: string;
+  }>({
+    open: false,
+    message: "",
+  });
+
+  // Estado del descargo
+  const [descargoEstado, setDescargoEstado] = useState("pendiente");
+  const [descargoEstadoModal, setDescargoEstadoModal] = useState(false);
+  const [cambiandoEstadoDescargo, setCambiandoEstadoDescargo] = useState(false);
 
   useEffect(() => {
     const fetchPacientes = async () => {
@@ -147,9 +188,12 @@ export default function DescargoForm() {
             servicio_id: l.servicio?.id || l.servicio_id,
             producto_id: l.producto?.id || l.producto_id,
             nota_venta: l.nota_venta || "",
+            estado: l.estado || "pendiente",
+            id: l.id, // para actualizar estado
           })),
         });
         setSelectedDate(data.fecha ? new Date(data.fecha) : new Date());
+        setDescargoEstado(data.estado || "pendiente");
       })
       .catch((err) => {
         toast.error("Error al cargar descargo");
@@ -220,9 +264,15 @@ export default function DescargoForm() {
     try {
       await actualizarDescargo(descargoId, formData);
       toast.success("Descargo actualizado correctamente");
-      // Opcional: redirigir a la lista o detalle
-      router.push("/platform/descargos");
-    } catch (error) {
+      router.push(`/platform/descargos/${descargoId}`);
+    } catch (error: any) {
+      setErrorModal({
+        open: true,
+        message:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Error al actualizar descargo",
+      });
       toast.error("Error al actualizar descargo");
       console.error("Error al actualizar descargo:", error);
     } finally {
@@ -230,18 +280,189 @@ export default function DescargoForm() {
     }
   };
 
+  // Factura handler
+  const handleGenerarFactura = async () => {
+    setFacturaLoading(true);
+    try {
+      await clonarParaFactura(descargoId, { clave_acceso: claveAcceso });
+      toast.success("Factura generada correctamente");
+      setFacturaModalOpen(false);
+      setClaveAcceso("");
+    } catch (error: any) {
+      setErrorModal({
+        open: true,
+        message:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Error al generar factura",
+      });
+      toast.error("Error al generar factura");
+      console.error(error);
+    } finally {
+      setFacturaLoading(false);
+    }
+  };
+
+  // Cambiar estado de linea
+  const handleCambiarEstadoLinea = async () => {
+    if (lineaEstadoModal.index === null) return;
+    setCambiandoEstado(true);
+    const linea = formData.lineas[lineaEstadoModal.index];
+    try {
+      await actualizarEstadoLineaDescargo(linea.id ?? 0);
+      toast.success("Estado de línea actualizado");
+      // Refrescar la línea (opcional: recargar todo el descargo)
+      const data = await obtenerDescargosById(descargoId);
+      setFormData((prev) => ({
+        ...prev,
+        lineas: (data.lineas || []).map((l: any) => ({
+          servicio_id: l.servicio?.id || l.servicio_id,
+          producto_id: l.producto?.id || l.producto_id,
+          nota_venta: l.nota_venta || "",
+          estado: l.estado || "pendiente",
+          id: l.id,
+        })),
+      }));
+    } catch (error: any) {
+      setErrorModal({
+        open: true,
+        message:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Error al cambiar estado de línea",
+      });
+      toast.error("Error al cambiar estado de línea");
+      console.error(error);
+    } finally {
+      setCambiandoEstado(false);
+      setLineaEstadoModal({ open: false, index: null });
+    }
+  };
+
+  // Cambiar estado del descargo
+  const handleCambiarEstadoDescargo = async () => {
+    setCambiandoEstadoDescargo(true);
+    try {
+      await actualizarEstadoDescargo(descargoId);
+      toast.success("Estado del descargo actualizado");
+      // Refrescar estado
+      const data = await obtenerDescargosById(descargoId);
+      setDescargoEstado(data.estado || "pendiente");
+    } catch (error: any) {
+      setErrorModal({
+        open: true,
+        message:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Error al cambiar estado del descargo",
+      });
+      toast.error("Error al cambiar estado del descargo");
+      console.error(error);
+    } finally {
+      setCambiandoEstadoDescargo(false);
+      setDescargoEstadoModal(false);
+    }
+  };
+
+  // Recarga automática de información después de cambiar estado de línea o descargo
+  useEffect(() => {
+    if (!descargoId || isNaN(descargoId)) return;
+    obtenerDescargosById(descargoId)
+      .then((data) => {
+        setFormData({
+          fecha: data.fecha?.slice(0, 10) || format(new Date(), "yyyy-MM-dd"),
+          direccion: data.direccion || "",
+          cliente: data.cliente || "",
+          paciente_id: data.paciente?.id || data.paciente_id || 0,
+          lineas: (data.lineas || []).map((l: any) => ({
+            servicio_id: l.servicio?.id || l.servicio_id,
+            producto_id: l.producto?.id || l.producto_id,
+            nota_venta: l.nota_venta || "",
+            estado: l.estado || "pendiente",
+            id: l.id,
+          })),
+        });
+        setSelectedDate(data.fecha ? new Date(data.fecha) : new Date());
+        setDescargoEstado(data.estado || "pendiente");
+      })
+      .catch((err) => {
+        toast.error("Error al cargar descargo");
+        console.error(err);
+      });
+  }, [descargoId, cambiandoEstado, cambiandoEstadoDescargo]);
+
   if (loading) {
     return <div className="p-8 text-center">Cargando descargo...</div>;
   }
 
   return (
     <div className="max-w-4xl mx-auto p-6">
+      {/* Error Modal */}
+      <Sheet
+        open={errorModal.open}
+        onOpenChange={(open) => setErrorModal((v) => ({ ...v, open }))}
+      >
+        <SheetContent side="top" className="max-w-md w-full">
+          <SheetHeader>
+            <SheetTitle>Error</SheetTitle>
+            <SheetDescription>{errorModal.message}</SheetDescription>
+          </SheetHeader>
+          <SheetFooter className="mt-6 flex gap-2">
+            <SheetClose asChild>
+              <Button type="button" variant="outline">
+                Cerrar
+              </Button>
+            </SheetClose>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+      {/* Confirmación cambio de estado descargo */}
+      <Sheet open={descargoEstadoModal} onOpenChange={setDescargoEstadoModal}>
+        <SheetContent className="max-w-md w-full">
+          <SheetHeader>
+            <SheetTitle>¿Está seguro?</SheetTitle>
+            <SheetDescription>
+              Esta acción cambiará el estado del descargo a <b>descargado</b>.
+            </SheetDescription>
+          </SheetHeader>
+          <SheetFooter className="mt-6 flex gap-2">
+            <Button
+              type="button"
+              onClick={handleCambiarEstadoDescargo}
+              disabled={
+                cambiandoEstadoDescargo || descargoEstado === "facturado"
+              }
+            >
+              {cambiandoEstadoDescargo ? "Cambiando..." : "Confirmar"}
+            </Button>
+            <SheetClose asChild>
+              <Button type="button" variant="outline">
+                Cancelar
+              </Button>
+            </SheetClose>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
       <Card>
         <CardHeader>
           <CardTitle>Editar Descargo Médico</CardTitle>
           <CardDescription>
             Modifique la información del descargo y sus servicios/productos
           </CardDescription>
+          <div className="mt-2 flex gap-2 items-center">
+            <Badge className="text-base">Estado: {descargoEstado}</Badge>
+            {descargoEstado !== "descargado" &&
+              descargoEstado !== "facturado" && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setDescargoEstadoModal(true)}
+                >
+                  Descargar / Cambiar estado descargo
+                </Button>
+              )}
+          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -254,6 +475,7 @@ export default function DescargoForm() {
                     <Button
                       variant="outline"
                       className="w-full justify-start text-left font-normal"
+                      disabled={descargoEstado === "facturado"}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {format(selectedDate, "PPP")}
@@ -264,7 +486,7 @@ export default function DescargoForm() {
                       mode="single"
                       selected={selectedDate}
                       onSelect={(date) => {
-                        if (date) {
+                        if (date && descargoEstado !== "facturado") {
                           setSelectedDate(date);
                           handleInputChange(
                             "fecha",
@@ -285,7 +507,7 @@ export default function DescargoForm() {
                   onValueChange={(value) =>
                     handleInputChange("paciente_id", Number.parseInt(value))
                   }
-                  disabled={pacientesLoading}
+                  disabled={pacientesLoading || descargoEstado === "facturado"}
                 >
                   <SelectTrigger>
                     <SelectValue
@@ -325,6 +547,7 @@ export default function DescargoForm() {
                   onChange={(e) => handleInputChange("cliente", e.target.value)}
                   placeholder="Nombre del cliente"
                   required
+                  disabled={descargoEstado === "facturado"}
                 />
               </div>
 
@@ -338,6 +561,7 @@ export default function DescargoForm() {
                   }
                   placeholder="Dirección del cliente"
                   required
+                  disabled={descargoEstado === "facturado"}
                 />
               </div>
             </div>
@@ -351,6 +575,7 @@ export default function DescargoForm() {
                   onClick={addLinea}
                   variant="outline"
                   size="sm"
+                  disabled={descargoEstado === "facturado"}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Agregar Linea de Descargo
@@ -365,6 +590,7 @@ export default function DescargoForm() {
               )}
 
               {formData.lineas.map((linea, index) => {
+                const isLineaEditable = descargoEstado !== "facturado";
                 const selectedService = linea.servicio_id
                   ? getSelectedService(linea.servicio_id)
                   : null;
@@ -380,13 +606,14 @@ export default function DescargoForm() {
                         <Select
                           value={linea.servicio_id?.toString() || ""}
                           onValueChange={(value) =>
+                            isLineaEditable &&
                             updateLinea(
                               index,
                               "servicio_id",
                               Number.parseInt(value),
                             )
                           }
-                          disabled={serviciosLoading}
+                          disabled={serviciosLoading || !isLineaEditable}
                         >
                           <SelectTrigger>
                             <SelectValue
@@ -427,13 +654,14 @@ export default function DescargoForm() {
                         <Select
                           value={linea.producto_id?.toString() || ""}
                           onValueChange={(value) =>
+                            isLineaEditable &&
                             updateLinea(
                               index,
                               "producto_id",
                               Number.parseInt(value),
                             )
                           }
-                          disabled={productosLoading}
+                          disabled={productosLoading || !isLineaEditable}
                         >
                           <SelectTrigger>
                             <SelectValue
@@ -470,10 +698,12 @@ export default function DescargoForm() {
                         <Textarea
                           value={linea.nota_venta}
                           onChange={(e) =>
+                            isLineaEditable &&
                             updateLinea(index, "nota_venta", e.target.value)
                           }
                           placeholder="Observaciones adicionales"
                           rows={2}
+                          disabled={!isLineaEditable}
                         />
                       </div>
 
@@ -482,12 +712,78 @@ export default function DescargoForm() {
                           type="button"
                           variant="outline"
                           size="sm"
-                          onClick={() => removeLinea(index)}
+                          onClick={() => isLineaEditable && removeLinea(index)}
                           className="w-full"
+                          disabled={!isLineaEditable}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge className="text-xs">
+                        Estado: {linea.estado || "pendiente"}
+                      </Badge>
+                      {/* Solo mostrar el botón de cambiar estado si el descargo NO está facturado */}
+                      {linea.estado !== "descargado" &&
+                        linea.id &&
+                        descargoEstado !== "facturado" && (
+                          <Sheet
+                            open={
+                              lineaEstadoModal.open &&
+                              lineaEstadoModal.index === index
+                            }
+                            onOpenChange={(open) =>
+                              setLineaEstadoModal({
+                                open,
+                                index: open ? index : null,
+                              })
+                            }
+                          >
+                            <SheetTrigger asChild>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                disabled={descargoEstado === "facturado"}
+                              >
+                                Descargar / Cambiar estado
+                              </Button>
+                            </SheetTrigger>
+                            <SheetContent
+                              side="right"
+                              className="max-w-md w-full"
+                            >
+                              <SheetHeader>
+                                <SheetTitle>¿Está seguro?</SheetTitle>
+                                <SheetDescription>
+                                  Esta acción cambiará el estado de la línea a{" "}
+                                  <b>descargado</b>.
+                                </SheetDescription>
+                              </SheetHeader>
+                              <SheetFooter className="mt-6 flex gap-2">
+                                <Button
+                                  type="button"
+                                  onClick={handleCambiarEstadoLinea}
+                                  disabled={
+                                    cambiandoEstado ||
+                                    descargoEstado === "facturado"
+                                  }
+                                >
+                                  {cambiandoEstado
+                                    ? "Cambiando..."
+                                    : "Confirmar"}
+                                </Button>
+                                <SheetClose asChild>
+                                  <Button type="button" variant="outline">
+                                    Cancelar
+                                  </Button>
+                                </SheetClose>
+                              </SheetFooter>
+                            </SheetContent>
+                          </Sheet>
+                        )}
                     </div>
 
                     {(selectedService || selectedProduct) && (
@@ -525,13 +821,69 @@ export default function DescargoForm() {
               </Card>
             )}
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={formData.lineas.length === 0 || submitting}
-            >
-              {submitting ? "Actualizando..." : "Actualizar Descargo"}
-            </Button>
+            <div className="flex flex-col md:flex-row gap-4 mt-4">
+              <Button
+                type="submit"
+                className="w-full md:w-auto"
+                disabled={
+                  formData.lineas.length === 0 ||
+                  submitting ||
+                  descargoEstado === "facturado"
+                }
+              >
+                {submitting ? "Actualizando..." : "Actualizar Descargo"}
+              </Button>
+              <Sheet open={facturaModalOpen} onOpenChange={setFacturaModalOpen}>
+                <SheetTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="w-full md:w-auto"
+                    disabled={descargoEstado === "facturado"}
+                  >
+                    Generar factura
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="max-w-md w-full">
+                  <SheetHeader>
+                    <SheetTitle>Generar factura</SheetTitle>
+                    <SheetDescription>
+                      Ingrese la clave de acceso para crear la factura de este
+                      descargo.
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="space-y-4 mt-4">
+                    <Label htmlFor="claveAcceso">Clave de acceso</Label>
+                    <Input
+                      id="claveAcceso"
+                      type="text"
+                      value={claveAcceso}
+                      onChange={(e) => setClaveAcceso(e.target.value)}
+                      placeholder="Clave de acceso"
+                      autoFocus
+                    />
+                  </div>
+                  <SheetFooter className="mt-6 flex gap-2">
+                    <Button
+                      type="button"
+                      onClick={handleGenerarFactura}
+                      disabled={
+                        !claveAcceso ||
+                        facturaLoading ||
+                        descargoEstado === "facturado"
+                      }
+                    >
+                      {facturaLoading ? "Creando..." : "Crear factura"}
+                    </Button>
+                    <SheetClose asChild>
+                      <Button type="button" variant="outline">
+                        Cancelar
+                      </Button>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
+            </div>
           </form>
         </CardContent>
       </Card>

@@ -61,11 +61,6 @@ export const appRoutes: AppRouter[] = mapRoutesWithUrls([
     isDroppable: false,
     routes: [
       {
-        title: "Crear",
-        icon: LayoutDashboard,
-        url: "/facturas/crear",
-      },
-      {
         title: "Lista",
         icon: LayoutDashboard,
         url: "/facturas",
