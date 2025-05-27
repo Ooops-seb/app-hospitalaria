@@ -2,9 +2,15 @@ import { Module } from '@nestjs/common';
 import { ComidaModule } from './comida/comida.module';
 import { HospedajeModule } from './hospedaje/hospedaje.module';
 import { RouterModule } from '@nestjs/core';
+import { ProductController } from './product.controller';
+import { ProductService } from './product.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Comida } from './comida/entities/comida.entity';
+import { HospedajeHospitalario } from './hospedaje/entities/hospedaje.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Comida, HospedajeHospitalario]),
     RouterModule.register([
       {
         path: 'productos',
@@ -23,5 +29,7 @@ import { RouterModule } from '@nestjs/core';
     ComidaModule,
     HospedajeModule,
   ],
+  controllers: [ProductController],
+  providers: [ProductService],
 })
 export class ProductModule {}
