@@ -1,46 +1,64 @@
 import { Module } from '@nestjs/common';
-import { ProcedimientoMedico } from './entities/ProcedimientoMedico.entity';
+import { ExamenModule } from './examen/examen.module';
+import { ImagenModule } from './imagen/imagen.module';
+import { AtencionModule } from './atencion/atencion.module';
+import { ProcedimientoModule } from './procedimiento/procedimiento.module';
+import { SuministroModule } from './suministro/suministro.module';
+import { RouterModule } from '@nestjs/core';
+import { ServiceService } from './service.service';
+import { ServiceController } from './service.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProcedimientoMedicoController } from './procedimiento-medico.controller';
-import { ProcedimientoMedicoService } from './procedimiento-medico.service';
-import { AtencionMedicaController } from './atencion-medica.controller';
-import { AtencionMedicaService } from './atencion-medica.service';
-import { AtencionMedica } from './entities/AtencionMedica.entity';
-import { ExamenLab } from './entities/ExamenLab.entity';
-import { ExamenLabController } from './examen-lab.controller';
-import { ExamenLabService } from './examen-lab.service';
-import { ImagenRayosX } from './entities/ImagenRayosX.entity';
-import { ImagenRayosXController } from './imagen.controller';
-import { ImagenService } from './imagen.service';
-import { SuministroMedicamento } from './entities/SuministroMedicamento.entity';
-import { SuministroMedicamentoController } from './suministro.controller';
-import { SuministroMedicamentoService } from './suministro.service';
+import { Servicio } from './entities/Servicio.entity';
+import { AtencionMedica } from './atencion/entities/atencion.entity';
+import { ProcedimientoMedico } from './procedimiento/entities/ProcedimientoMedico.entity';
+import { SuministroMedicamento } from './suministro/entities/SuministroMedicamento.entity';
+import { ImagenRayosX } from './imagen/entities/ImagenRayosX.entity';
+import { ExamenLab } from './examen/entities/ExamenLab.entity';
 
 @Module({
   imports: [
+    RouterModule.register([
+      {
+        path: 'servicios',
+        children: [
+          {
+            path: 'examenes',
+            module: ExamenModule,
+          },
+          {
+            path: 'atencion',
+            module: AtencionModule,
+          },
+          {
+            path: 'procedimiento',
+            module: ProcedimientoModule,
+          },
+          {
+            path: 'suministro',
+            module: SuministroModule,
+          },
+          {
+            path: 'imagen',
+            module: ImagenModule,
+          },
+        ],
+      },
+    ]),
+    ExamenModule,
+    ImagenModule,
+    AtencionModule,
+    ProcedimientoModule,
+    SuministroModule,
     TypeOrmModule.forFeature([
-      ProcedimientoMedico,
+      Servicio,
       AtencionMedica,
-      ExamenLab,
-      ImagenRayosX,
+      ProcedimientoMedico,
       SuministroMedicamento,
+      ImagenRayosX,
+      ExamenLab,
     ]),
   ],
-  controllers: [
-    // ServiceController,
-    ProcedimientoMedicoController,
-    AtencionMedicaController,
-    ExamenLabController,
-    ImagenRayosXController,
-    SuministroMedicamentoController,
-  ],
-  providers: [
-    // ServiceService,
-    ProcedimientoMedicoService,
-    AtencionMedicaService,
-    ExamenLabService,
-    ImagenService,
-    SuministroMedicamentoService,
-  ],
+  providers: [ServiceService],
+  controllers: [ServiceController],
 })
 export class ServiceModule {}

@@ -1,19 +1,24 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { obtenerProductos, ProductList } from "@/lib/api/producto";
+import { useEffect, useState } from "react";
 
-export const productoSchema = z.object({
-  descripcion: z.string().min(1),
-  precio: z.coerce.number().positive(),
-});
+export const useProductos = () => {
+  const [productos, setProductos] = useState<ProductList[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export type ProductoForm = z.infer<typeof productoSchema>;
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const data = await obtenerProductos();
+        setProductos(data);
+      } catch (error) {
+        console.error("Error al cargar productos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-export const useProductoForm = () =>
-  useForm<ProductoForm>({
-    resolver: zodResolver(productoSchema),
-    defaultValues: {
-      descripcion: "",
-      precio: 0,
-    },
-  });
+    fetch();
+  }, []);
+
+  return { productos, loading };
+};

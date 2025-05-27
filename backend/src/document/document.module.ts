@@ -1,18 +1,42 @@
 import { Module } from '@nestjs/common';
-import { DocumentService } from './document.service';
-import { DocumentController } from './document.controller';
+import { DescargoModule } from './descargo/descargo.module';
+import { FacturaModule } from './factura/factura.module';
+import { RouterModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DocumentoTransaccional } from './entities/document.entity';
+import { LineaDescargo } from 'src/line/descargo/entities/descargo.entity';
+import { LineaFactura } from 'src/line/factura/entities/factura.entity';
 import { Paciente } from 'src/patient/entities/patient.entity';
-import { FacturaController } from './factura.controller';
-import { Factura } from './entities/Factura.entity';
-import { FacturaService } from './factura.service';
+import { Descargo } from './descargo/entities/descargo.entity';
+import { Documento } from './entities/Documento.entity';
+import { Factura } from './factura/entities/factura.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([DocumentoTransaccional, Paciente, Factura]),
+    TypeOrmModule.forFeature([
+      Descargo,
+      Factura,
+      Documento,
+      LineaDescargo,
+      Paciente,
+      LineaFactura,
+    ]),
+    RouterModule.register([
+      {
+        path: 'documentos',
+        children: [
+          {
+            path: 'descargo',
+            module: DescargoModule,
+          },
+          {
+            path: 'factura',
+            module: FacturaModule,
+          },
+        ],
+      },
+    ]),
+    DescargoModule,
+    FacturaModule,
   ],
-  controllers: [DocumentController, FacturaController],
-  providers: [DocumentService, FacturaService],
 })
 export class DocumentModule {}

@@ -1,17 +1,30 @@
 import { Module } from '@nestjs/common';
-import { LineaTransaccionController } from './linea-transaccion.controller';
-import { LineaTransaccionService } from './linea-transaccion.service';
+import { DescargoModule } from './descargo/descargo.module';
+import { FacturaModule } from './factura/factura.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Factura } from 'src/document/entities/Factura.entity';
-import { Producto } from 'src/product/entities/product.entity';
-import { Servicio } from 'src/service/entities/service.entity';
-import { LineaTransaccion } from './entities/line.entity';
+import { LineaTransaccion } from './entities/LineaTransaccion.entity';
+import { RouterModule } from '@nestjs/core';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([LineaTransaccion, Factura, Producto, Servicio]),
+    RouterModule.register([
+      {
+        path: 'transacciones',
+        children: [
+          {
+            path: 'factura',
+            module: FacturaModule,
+          },
+          {
+            path: 'descargo',
+            module: DescargoModule,
+          },
+        ],
+      },
+    ]),
+    DescargoModule,
+    FacturaModule,
+    TypeOrmModule.forFeature([LineaTransaccion]),
   ],
-  controllers: [LineaTransaccionController],
-  providers: [LineaTransaccionService],
 })
 export class LineModule {}

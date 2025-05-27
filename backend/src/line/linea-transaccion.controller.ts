@@ -1,48 +1,23 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Patch,
-  Post,
-} from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { CreateLineaDeTransaccionDto } from './dto/create-linea-transaccion.dto';
-import { UpdateLineaDeTransaccionDto } from './dto/update-linea-transaccion.dto';
+import { Patch, Param, Body, ParseIntPipe } from '@nestjs/common';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ChangeStatusLineaDto } from './entities/dto/change-status-linea.dto';
 import { LineaTransaccionService } from './linea-transaccion.service';
 
-@ApiTags('LineaTransaccion')
-@Controller('linea-transaccion')
 export class LineaTransaccionController {
-  constructor(private readonly service: LineaTransaccionService) {}
+  constructor(
+    protected readonly lineaTransaccionService: LineaTransaccionService,
+  ) {}
 
-  @Post()
-  create(@Body() dto: CreateLineaDeTransaccionDto) {
-    return this.service.create(dto);
-  }
-
-  @Get()
-  findAll() {
-    return this.service.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.service.findOne(id);
-  }
-
-  @Patch(':id')
-  update(
+  @Patch(':id/cambiar-estado')
+  @ApiOperation({ summary: 'Cambiar estado de la línea de transacción' })
+  @ApiResponse({
+    status: 200,
+    description: 'Estado actualizado correctamente.',
+  })
+  changeStatus(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateLineaDeTransaccionDto,
+    @Body() dto: ChangeStatusLineaDto,
   ) {
-    return this.service.update(id, dto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.service.remove(id);
+    return this.lineaTransaccionService.changeStatus(id, dto);
   }
 }
