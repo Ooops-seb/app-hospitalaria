@@ -63,18 +63,24 @@ export const appRoutes: AppRouter[] = mapRoutesWithUrls([
       {
         title: "Lista",
         icon: LayoutDashboard,
-        url: "/facturas/lista",
+        url: "/facturas",
       },
+    ],
+  },
+  {
+    title: "Descargos",
+    isDroppable: false,
+    routes: [
       {
         title: "Crear",
         icon: LayoutDashboard,
-        url: "/facturas/crear",
+        url: "/descargos/crear",
       },
-      // {
-      //   title: "Detalle Factura",
-      //   icon: LayoutDashboard,
-      //   url: "/facturas/[id]",
-      // },
+      {
+        title: "Lista",
+        icon: LayoutDashboard,
+        url: "/descargos",
+      },
     ],
   },
   {
@@ -82,46 +88,14 @@ export const appRoutes: AppRouter[] = mapRoutesWithUrls([
     isDroppable: false,
     routes: [
       {
-        title: "Lista",
-        icon: LayoutDashboard,
-        url: "/paciente/lista",
-      },
-      {
         title: "Crear",
         icon: LayoutDashboard,
         url: "/paciente/crear",
       },
-    ],
-  },
-  {
-    title: "Documentos Transaccionales",
-    isDroppable: false,
-    routes: [
       {
         title: "Lista",
         icon: LayoutDashboard,
-        url: "/doctransaccional/lista",
-      },
-      {
-        title: "Crear",
-        icon: LayoutDashboard,
-        url: "/doctransaccional/crear",
-      },
-    ],
-  },
-  {
-    title: "Linea de Transacción",
-    isDroppable: false,
-    routes: [
-      {
-        title: "Lista",
-        icon: LayoutDashboard,
-        url: "/linea/lista",
-      },
-      {
-        title: "Crear",
-        icon: LayoutDashboard,
-        url: "/linea/crear",
+        url: "/paciente",
       },
     ],
   },
@@ -130,19 +104,14 @@ export const appRoutes: AppRouter[] = mapRoutesWithUrls([
     isDroppable: false,
     routes: [
       {
-        title: "Crear Procedimiento Medico",
+        title: "Crear",
         icon: LayoutDashboard,
-        url: "/servicios/procedimiento_medico",
+        url: "/servicios/crear",
       },
       {
-        title: "Lista Procedimiento Medico",
+        title: "Lista",
         icon: LayoutDashboard,
-        url: "/servicios/lista",
-      },
-      {
-        title: "Crear Suministros Medico",
-        icon: LayoutDashboard,
-        url: "/servicios/suministros",
+        url: "/servicios",
       },
     ],
   },
@@ -153,12 +122,12 @@ export const appRoutes: AppRouter[] = mapRoutesWithUrls([
       {
         title: "Crear",
         icon: LayoutDashboard,
-        url: "/productos/comida",
+        url: "/productos/crear",
       },
       {
         title: "Lista",
         icon: LayoutDashboard,
-        url: "/productos/lista",
+        url: "/productos",
       },
     ],
   },

@@ -12,8 +12,8 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('App Hospitalaria')
-    .setDescription('Api de app hospitalaria')
-    .setVersion('1.0')
+    .setDescription('Api de App Hospitalaria')
+    .setVersion('2.0')
     .addTag('arq')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);

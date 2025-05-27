@@ -1,32 +1,80 @@
 import api from "@/lib/api";
 
-export interface ProcedimientoMedicoDto {
+export interface ServicioFormData {
   descripcion: string;
-  registro: string;
+  registro: Date;
   precio: number;
-  medico_asignado: string;
-  procedimiento: string;
+  estado?: Estado;
+  tipo_examen?: string;
+  tipo_servicio?: string;
+  medico_asignado?: string;
+  procedimiento?: string;
+  tipo_suministro?: string;
+  zona_cuerpo?: string;
 }
 
-export const crearProcedimientoMedico = async (
-  data: ProcedimientoMedicoDto,
-) => {
-  const response = await api.post("/procedimiento-medico", data);
-  return response.data;
-};
-
-export interface ProcedimientoMedico {
+export interface ServicioList {
   id: number;
+  registro: Date;
   descripcion: string;
-  registro: string; // ISO date
   precio: number;
-  medico_asignado: string;
-  procedimiento: string;
+  estado: Estado;
+  tipo_examen?: string;
+  tipo_servicio: ServicioType;
+  zona_cuerpo?: string;
+  medico_asignado?: null;
+  procedimiento?: string;
+  tipo_suministro?: string;
 }
 
-export const obtenerProcedimientos = async (): Promise<
-  ProcedimientoMedico[]
-> => {
-  const response = await api.get("/procedimiento-medico");
+export enum Estado {
+  Default = "default",
+  Facturado = "facturado",
+  Descargado = "descargado",
+}
+
+export const crearServicioExamenes = async (data: ServicioFormData) => {
+  const response = await api.post("/servicios/examenes", data);
   return response.data;
 };
+
+export const crearServicioImagen = async (data: ServicioFormData) => {
+  const response = await api.post("/servicios/imagen", data);
+  return response.data;
+};
+
+export const crearServicioAtencion = async (data: ServicioFormData) => {
+  const response = await api.post("/servicios/atencion", data);
+  return response.data;
+};
+
+export const crearServicioProcedimiento = async (data: ServicioFormData) => {
+  const response = await api.post("/servicios/procedimiento", data);
+  return response.data;
+};
+
+export const crearServicioSuministro = async (data: ServicioFormData) => {
+  const response = await api.post("/servicios/suministro", data);
+  return response.data;
+};
+
+export const obtenerServicios = async (): Promise<ServicioList[]> => {
+  const response = await api.get("/servicios/list");
+  return response.data;
+};
+
+export enum TipoServicio {
+  Examenes = "examenes",
+  Imagen = "imagen",
+  Atencion = "atencion",
+  Procedimiento = "procedimiento",
+  Suministro = "suministro",
+}
+
+export type ServicioType =
+  | "examenes"
+  | "imagen"
+  | "atencion"
+  | "procedimiento"
+  | "suministro"
+  | "";

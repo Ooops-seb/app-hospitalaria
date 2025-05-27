@@ -1,4 +1,4 @@
-import { DocumentoTransaccional } from 'src/document/entities/document.entity';
+import { Documento } from 'src/document/entities/Documento.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -21,6 +21,6 @@ export class Paciente {
   @Column()
   telefono: string;
 
-  @OneToMany(() => DocumentoTransaccional, (documento) => documento.paciente)
-  documentos: DocumentoTransaccional[];
+  @OneToMany(() => Documento, (documento) => documento.paciente)
+  documentos: Documento[];
 }
