@@ -6,11 +6,11 @@ export interface FacturaDto {
 }
 
 export const crearFactura = async (data: FacturaDto) => {
-  const response = await api.post("/factura", data);
+  const response = await api.post("/documentos/factura", data);
   return response.data;
 };
 export const obtenerFacturas = async () => {
-  const response = await api.get("/factura");
+  const response = await api.get("/documentos/factura");
   return response.data;
 };
 // Para creación
@@ -51,6 +51,6 @@ export interface FacturaDetalle {
 }
 
 export const obtenerFacturaDetalle = async (id: number) => {
-  const response = await api.get(`/factura/${id}`);
+  const response = await api.get(`/documentos/factura/${id}`);
   return response.data;
 };

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { obtenerComidas, Comida } from "@/lib/api/producto";
+import { obtenerComidas, ProductList } from "@/lib/api/producto";
 
 export const useComidas = () => {
-  const [comidas, setComidas] = useState<Comida[]>([]);
+  const [comidas, setComidas] = useState<ProductList[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

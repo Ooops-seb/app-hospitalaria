@@ -11,7 +11,7 @@ export interface ProcedimientoMedicoDto {
 export const crearProcedimientoMedico = async (
   data: ProcedimientoMedicoDto,
 ) => {
-  const response = await api.post("/procedimiento-medico", data);
+  const response = await api.post("/servicios/procedimiento-medico", data);
   return response.data;
 };
 
@@ -27,6 +27,6 @@ export interface ProcedimientoMedico {
 export const obtenerProcedimientos = async (): Promise<
   ProcedimientoMedico[]
 > => {
-  const response = await api.get("/procedimiento-medico");
+  const response = await api.get("/servicios/procedimiento-medico");
   return response.data;
 };

@@ -1,38 +1,76 @@
 "use client";
 
 import { useComidas } from "@/hooks/useProducto/useComidas";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from "@/components/shadcn/ui/table";
 
 export default function ComidaList() {
   const { comidas, loading } = useComidas();
 
-  if (loading) return <p>Cargando comidas...</p>;
-  if (!comidas.length) return <p>No hay comidas registradas.</p>;
+  if (loading) return <p>Cargando productos...</p>;
+  if (!comidas.length) return <p>No hay productos registrados.</p>;
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Listado de Comidas</h1>
-      <table className="w-full border border-gray-300">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2 border">ID</th>
-            <th className="p-2 border">Descripción</th>
-            <th className="p-2 border">Precio</th>
-            {/* <th className="p-2 border">Valor Nutritivo</th> */}
-            <th className="p-2 border">Tipo</th>
-          </tr>
-        </thead>
-        <tbody>
-          {comidas.map((comida) => (
-            <tr key={comida.id}>
-              <td className="p-2 border">{comida.id}</td>
-              <td className="p-2 border">{comida.descripcion}</td>
-              <td className="p-2 border">${comida.precio.toFixed(2)}</td>
-              {/* <td className="p-2 border">{comida.valorNutritivo}</td> */}
-              <td className="p-2 border">{comida.tipo}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <h1 className="text-xl font-bold mb-4">Listado de Productos</h1>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>ID</TableHead>
+            <TableHead>Descripción</TableHead>
+            <TableHead>Precio</TableHead>
+            <TableHead>Tipo Producto</TableHead>
+            <TableHead>Valor</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {[...comidas]
+            .sort((a, b) => a.id - b.id)
+            .map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>{item.id}</TableCell>
+                <TableCell>{item.descripcion}</TableCell>
+                <TableCell>${item.precio.toFixed(2)}</TableCell>
+                <TableCell>{item.tipo_producto}</TableCell>
+                <TableCell>
+                  {item.tipo_producto === "comida" ? (
+                    <div>
+                      <div>
+                        <b>Tipo:</b> {item.tipo}
+                      </div>
+                      {item.valor_nutritivo && (
+                        <div>
+                          <b>Valor Nutritivo:</b> {item.valor_nutritivo}
+                        </div>
+                      )}
+                    </div>
+                  ) : item.tipo_producto === "hospedaje" ? (
+                    <div>
+                      <div>
+                        <b>Ingreso:</b>{" "}
+                        {item.fecha_ingreso
+                          ? new Date(item.fecha_ingreso).toLocaleDateString()
+                          : "-"}
+                      </div>
+                      <div>
+                        <b>Salida:</b>{" "}
+                        {item.fecha_salida
+                          ? new Date(item.fecha_salida).toLocaleDateString()
+                          : "-"}
+                      </div>
+                    </div>
+                  ) : null}
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

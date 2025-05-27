@@ -8,6 +8,6 @@ export interface SuministroMedicamento {
 }
 
 export const crearSuministro = async (data: SuministroMedicamento) => {
-  const response = await api.post("/suministro-medicamento", data);
+  const response = await api.post("/servicios/suministro-medicamento", data);
   return response.data;
 };

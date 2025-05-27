@@ -1,41 +1,43 @@
 import api from "@/lib/api";
 
-export interface ProductoDto {
+export type ProductType = "comida" | "hospedaje" | "";
+
+export interface ProductFormData {
   descripcion: string;
   precio: number;
+  valor_nutritivo?: string;
+  tipo?: string;
+  fecha_inicio?: Date;
+  fecha_fin?: Date;
 }
 
-export const crearProducto = async (data: ProductoDto) => {
-  const response = await api.post("/comida", data);
-  return response.data;
-};
-
-export const obtenerProductos = async () => {
-  const response = await api.get("/comida");
-  return response.data;
-};
-export interface ComidaDto {
-  descripcion: string;
-  precio: number;
-  type: "Comida";
-  valorNutri: string;
-  tipo: string;
-}
-
-export const crearComida = async (data: ComidaDto) => {
-  const response = await api.post("/comida", data);
-  return response.data;
-};
-
-export interface Comida {
+export interface ProductList {
   id: number;
   descripcion: string;
   precio: number;
-  valorNutritivo: string;
-  tipo: string;
+  valor_nutritivo?: null | string;
+  tipo?: string;
+  tipo_producto: TipoProducto;
+  fecha_ingreso?: Date;
+  fecha_salida?: Date;
 }
 
-export const obtenerComidas = async (): Promise<Comida[]> => {
-  const response = await api.get("/comida");
+export const crearProductoComida = async (data: ProductFormData) => {
+  const response = await api.post("/productos/comida", data);
   return response.data;
 };
+
+export const crearProductoHospedaje = async (data: ProductFormData) => {
+  const response = await api.post("/productos/hospedaje", data);
+  return response.data;
+};
+
+export const obtenerComidas = async (): Promise<ProductList[]> => {
+  const response = await api.get("/productos/list");
+  return response.data;
+};
+
+export enum TipoProducto {
+  Comida = "comida",
+  Hospedaje = "hospedaje",
+}

@@ -70,11 +70,22 @@ export const appRoutes: AppRouter[] = mapRoutesWithUrls([
         icon: LayoutDashboard,
         url: "/facturas/crear",
       },
-      // {
-      //   title: "Detalle Factura",
-      //   icon: LayoutDashboard,
-      //   url: "/facturas/[id]",
-      // },
+    ],
+  },
+  {
+    title: "Descargos",
+    isDroppable: false,
+    routes: [
+      {
+        title: "Lista",
+        icon: LayoutDashboard,
+        url: "/descargos",
+      },
+      {
+        title: "Crear",
+        icon: LayoutDashboard,
+        url: "/descargos/crear",
+      },
     ],
   },
   {
@@ -94,55 +105,18 @@ export const appRoutes: AppRouter[] = mapRoutesWithUrls([
     ],
   },
   {
-    title: "Documentos Transaccionales",
-    isDroppable: false,
-    routes: [
-      {
-        title: "Lista",
-        icon: LayoutDashboard,
-        url: "/doctransaccional/lista",
-      },
-      {
-        title: "Crear",
-        icon: LayoutDashboard,
-        url: "/doctransaccional/crear",
-      },
-    ],
-  },
-  {
-    title: "Linea de Transacción",
-    isDroppable: false,
-    routes: [
-      {
-        title: "Lista",
-        icon: LayoutDashboard,
-        url: "/linea/lista",
-      },
-      {
-        title: "Crear",
-        icon: LayoutDashboard,
-        url: "/linea/crear",
-      },
-    ],
-  },
-  {
     title: "Servicios",
     isDroppable: false,
     routes: [
       {
-        title: "Crear Procedimiento Medico",
+        title: "Lista",
         icon: LayoutDashboard,
-        url: "/servicios/procedimiento_medico",
+        url: "/servicios",
       },
       {
-        title: "Lista Procedimiento Medico",
+        title: "Crear",
         icon: LayoutDashboard,
-        url: "/servicios/lista",
-      },
-      {
-        title: "Crear Suministros Medico",
-        icon: LayoutDashboard,
-        url: "/servicios/suministros",
+        url: "/servicios/crear",
       },
     ],
   },
@@ -153,12 +127,12 @@ export const appRoutes: AppRouter[] = mapRoutesWithUrls([
       {
         title: "Crear",
         icon: LayoutDashboard,
-        url: "/productos/comida",
+        url: "/productos/crear",
       },
       {
         title: "Lista",
         icon: LayoutDashboard,
-        url: "/productos/lista",
+        url: "/productos",
       },
     ],
   },
