@@ -18,10 +18,6 @@ export class CreateLineaDescargoDto {
   @IsInt()
   servicio_id?: number;
 
-  @ApiProperty({ example: 2 })
-  @IsInt()
-  cantidad: number;
-
   @ApiProperty({ example: 'Nota de venta ejemplo' })
   @IsString()
   nota_venta: string;

@@ -73,9 +73,6 @@ export class DescargoService extends LineaTransaccionService {
     if (dto.nota_venta !== undefined) {
       linea.nota_venta = dto.nota_venta;
     }
-    if (dto.cantidad !== undefined) {
-      (linea as any).cantidad = dto.cantidad;
-    }
 
     await this.lineaDescargoRepo.save(linea);
     return linea;

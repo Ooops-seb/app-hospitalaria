@@ -17,6 +17,7 @@ import { EstadosEnum } from 'common/enums/Estado.enum';
 import { Factura } from '../factura/entities/factura.entity';
 import { DocumentService } from '../document.service';
 import { LineaDescargo } from 'src/line/descargo/entities/descargo.entity';
+import { UpdateLineaDescargoDto } from 'src/line/descargo/dto/update-lineadescargo.dto';
 
 @Injectable()
 export class DescargoService extends DocumentService {
@@ -180,5 +181,51 @@ export class DescargoService extends DocumentService {
       factura: factura,
     });
     return { message: 'Factura creada correctamente' };
+  }
+
+  // Permite actualizar una línea de descargo desde el controlador
+  async updateLineaDescargoPublic(id: number, dto: Partial<any>) {
+    return this.lineaDescargoService.updateLineaDescargo(id, dto);
+  }
+
+  /**
+   * Actualiza descargo y sus líneas, solo campos permitidos
+   */
+  async updateWithLines(id: number, dto: UpdateDescargoDto) {
+    // Solo se permite actualizar direccion y cliente
+    const descargoUpdate: Partial<UpdateDescargoDto> = {};
+    if (typeof dto.direccion === 'string') {
+      descargoUpdate.direccion = dto.direccion;
+    }
+    if (typeof dto.cliente === 'string') {
+      descargoUpdate.cliente = dto.cliente;
+    }
+    await this.descargoRepo.update(id, descargoUpdate);
+
+    // Actualizar líneas si vienen en el dto
+    if (Array.isArray(dto.lineas)) {
+      for (const linea of dto.lineas) {
+        const lineaUpdate: Partial<UpdateLineaDescargoDto> = {};
+        if (typeof linea.nota_venta === 'string') {
+          lineaUpdate.nota_venta = linea.nota_venta;
+        }
+        if (typeof linea.producto_id === 'number') {
+          lineaUpdate.producto_id = linea.producto_id;
+        }
+        if (typeof linea.servicio_id === 'number') {
+          lineaUpdate.servicio_id = linea.servicio_id;
+        }
+        if (
+          Object.keys(lineaUpdate).length > 0 &&
+          typeof (linea as any).id === 'number'
+        ) {
+          await this.updateLineaDescargoPublic(
+            Number((linea as any).id),
+            lineaUpdate,
+          );
+        }
+      }
+    }
+    return this.findOne(id);
   }
 }
