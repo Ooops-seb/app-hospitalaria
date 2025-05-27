@@ -48,6 +48,7 @@ export class DescargoService extends DocumentService {
       direccion,
       cliente,
       paciente,
+      estado: EstadosEnum.DESCARGADO,
     });
     await this.descargoRepo.save(descargo);
 
@@ -98,7 +99,7 @@ export class DescargoService extends DocumentService {
   async clonarADocumentoFactura(
     descargoId: number,
     clave_acceso: string,
-  ): Promise<{ factura: Factura; lineas: LineaFactura[] }> {
+  ): Promise<{ message: string }> {
     // 1. Buscar el descargo y sus relaciones completas
     const descargo = await this.descargoRepo.findOne({
       where: { id: descargoId },
@@ -113,6 +114,9 @@ export class DescargoService extends DocumentService {
     });
     descargo.lineas = lineas;
 
+    if (descargo.estado === EstadosEnum.FACTURADO) {
+      throw new BadRequestException('Este descargo ya ha sio facturado');
+    }
     if (descargo.estado !== EstadosEnum.DESCARGADO) {
       throw new BadRequestException(
         'El descargo debe estar en estado DESCARGADO para facturarse',
@@ -136,7 +140,7 @@ export class DescargoService extends DocumentService {
       cliente: descargo.cliente,
       direccion: descargo.direccion,
       fecha: descargo.fecha,
-      paciente: descargo.paciente, // Relación directa, objeto completo
+      paciente: descargo.paciente,
       estado: EstadosEnum.DESCARGADO,
     });
     await this.facturaRepo.save(factura);
@@ -144,12 +148,17 @@ export class DescargoService extends DocumentService {
     // 4. Clonar las líneas de descargo a líneas de factura, usando relaciones completas
     const lineasFactura: Partial<LineaFactura>[] = descargo.lineas.map(
       (linea) => {
-        return {
+        const data: Partial<LineaFactura> = {
           estado: EstadosEnum.DESCARGADO,
-          factura: factura, // Relación directa
-          producto: linea.producto ?? null, // Relación directa
-          servicio: linea.servicio ?? null, // Relación directa
+          factura: factura,
         };
+        if (linea.producto) {
+          data.producto = linea.producto;
+        }
+        if (linea.servicio) {
+          data.servicio = linea.servicio;
+        }
+        return data;
       },
     );
     try {
@@ -166,23 +175,10 @@ export class DescargoService extends DocumentService {
       { descargo: { id: descargo.id } },
       { estado: EstadosEnum.FACTURADO },
     );
-    descargo.estado = EstadosEnum.FACTURADO;
-    descargo.factura = factura;
-    await this.descargoRepo.save(descargo);
-
-    // 6. Recargar factura y líneas con relaciones completas
-    const facturaCompleta = await this.facturaRepo.findOne({
-      where: { id: factura.id },
-      relations: ['paciente'],
+    await this.descargoRepo.update(descargo.id, {
+      estado: EstadosEnum.FACTURADO,
+      factura: factura,
     });
-    if (!facturaCompleta) {
-      throw new BadRequestException('No se pudo recargar la factura creada');
-    }
-    const lineaFacturaRepo = this.lineaFacturaService.lineaFacturaRepo;
-    const lineasFacturaCompletas = await lineaFacturaRepo.find({
-      where: { factura: { id: factura.id } },
-      // relations: ['producto', 'servicio'],
-    });
-    return { factura: facturaCompleta, lineas: lineasFacturaCompletas };
+    return { message: 'Factura creada correctamente' };
   }
 }

@@ -39,6 +39,7 @@ export class DescargoService extends LineaTransaccionService {
         servicio,
         nota_venta: linea.nota_venta,
         descargo,
+        estado: EstadosEnum.DESCARGADO,
       });
       lineasEntities.push(lineaEntity);
     }

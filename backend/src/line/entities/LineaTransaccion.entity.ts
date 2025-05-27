@@ -18,12 +18,12 @@ export class LineaTransaccion {
   @ManyToOne(() => Servicio, (servicio) => servicio.lineas, {
     nullable: true,
   })
-  servicio: Servicio;
+  servicio?: Servicio;
 
   @ManyToOne(() => Producto, (producto) => producto.lineas, {
     nullable: true,
   })
-  producto: Producto;
+  producto?: Producto;
 
   @Column({
     type: 'enum',
