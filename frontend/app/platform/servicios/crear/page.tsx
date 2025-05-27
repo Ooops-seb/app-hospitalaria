@@ -3,7 +3,6 @@
 
 import type React from "react";
 import { Button } from "@/components/shadcn/ui/button";
-import { Calendar } from "@/components/shadcn/ui/calendar";
 import {
   Card,
   CardHeader,
@@ -13,11 +12,7 @@ import {
 } from "@/components/shadcn/ui/card";
 import { Input } from "@/components/shadcn/ui/input";
 import { Label } from "@/components/shadcn/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/shadcn/ui/popover";
+
 import {
   Select,
   SelectContent,
@@ -26,97 +21,34 @@ import {
   SelectValue,
 } from "@/components/shadcn/ui/select";
 import { Textarea } from "@/components/shadcn/ui/textarea";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import { useState } from "react";
 
-type ProductType = "comida" | "hospedaje" | "";
-type Estado = "activo" | "inactivo" | "pendiente";
-
-interface ProductFormData {
-  // Parámetros comunes de Producto
-  descripcion: string;
-  precio: number;
-  estado: Estado;
-
-  // Parámetros específicos de Comida
-  valorNutri?: string;
-  tipo?: string;
-
-  // Parámetros específicos de Hospedaje
-  fecha_inicio?: Date;
-  fecha_fin?: Date;
-}
+import { useServicioForm } from "@/hooks/useServicioForm";
 
 export default function CrearServicioPage() {
-  const [productType, setProductType] = useState<ProductType>("");
-  const [formData, setFormData] = useState<ProductFormData>({
-    descripcion: "",
-    precio: 0,
-    estado: "activo",
-  });
+  const {
+    formData,
+    submitted,
+    handleInputChange,
+    handleSubmit,
+    servicioType,
+    setServicioType,
+  } = useServicioForm();
 
-  const handleInputChange = (field: keyof ProductFormData, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Datos del producto:", {
-      tipo: productType,
-      ...formData,
-    });
-  };
   return (
     <div>
       <div className="max-w-2xl mx-auto p-6">
         <Card>
           <CardHeader>
-            <CardTitle>Crear Nuevo Producto</CardTitle>
+            <CardTitle>Crear Nuevo Servicio</CardTitle>
             <CardDescription>
-              Complete el formulario para crear un producto de comida o
-              hospedaje
+              Complete el formulario para crear un servicio
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Selector de tipo de producto */}
-              <div className="space-y-2">
-                <Label htmlFor="product-type">Tipo de Producto *</Label>
-                <Select
-                  value={productType}
-                  onValueChange={(value: ProductType) => setProductType(value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione el tipo de producto" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="comida">Comida</SelectItem>
-                    <SelectItem value="hospedaje">Hospedaje</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
               {/* Parámetros comunes del Producto */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Información General</h3>
-
-                <div className="space-y-2">
-                  <Label htmlFor="descripcion">Descripción *</Label>
-                  <Textarea
-                    id="descripcion"
-                    placeholder="Ingrese la descripción del producto"
-                    value={formData.descripcion}
-                    onChange={(e) =>
-                      handleInputChange("descripcion", e.target.value)
-                    }
-                    required
-                  />
-                </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="precio">Precio *</Label>
                   <Input
@@ -137,131 +69,163 @@ export default function CrearServicioPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="estado">Estado *</Label>
-                  <Select
-                    value={formData.estado}
-                    onValueChange={(value: Estado) =>
-                      handleInputChange("estado", value)
+                  <Label htmlFor="descripcion">Descripción *</Label>
+                  <Textarea
+                    id="descripcion"
+                    placeholder="Ingrese la descripción del producto"
+                    value={formData.descripcion}
+                    onChange={(e) =>
+                      handleInputChange("descripcion", e.target.value)
                     }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="activo">Activo</SelectItem>
-                      <SelectItem value="inactivo">Inactivo</SelectItem>
-                      <SelectItem value="pendiente">Pendiente</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    required
+                  />
                 </div>
               </div>
 
-              {/* Parámetros específicos de Comida */}
-              {productType === "comida" && (
+              {/* Selector de tipo de servicio */}
+              <div className="space-y-2">
+                <Label htmlFor="service-type">Tipo de Servicio *</Label>
+                <Select
+                  value={servicioType}
+                  onValueChange={(value) => setServicioType(value as any)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccione el tipo de servicio" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="examenes">Exámenes</SelectItem>
+                    <SelectItem value="imagen">Imagen</SelectItem>
+                    <SelectItem value="atencion">Atención</SelectItem>
+                    <SelectItem value="procedimiento">Procedimiento</SelectItem>
+                    <SelectItem value="suministro">Suministro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Parámetros específicos de Exámenes */}
+              {servicioType === "examenes" && (
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">
-                    Información de Comida
+                    Información de Examen
                   </h3>
-
                   <div className="space-y-2">
-                    <Label htmlFor="valorNutri">Valor Nutricional</Label>
-                    <Textarea
-                      id="valorNutri"
-                      placeholder="Ingrese el valor nutricional"
-                      value={formData.valorNutri || ""}
+                    <Label htmlFor="tipo_examen">Tipo de Examen</Label>
+                    <Input
+                      id="tipo_examen"
+                      value={formData.tipo_examen || ""}
                       onChange={(e) =>
-                        handleInputChange("valorNutri", e.target.value)
+                        handleInputChange("tipo_examen", e.target.value)
                       }
                     />
                   </div>
-
                   <div className="space-y-2">
-                    <Label htmlFor="tipo">Tipo de Comida</Label>
-                    <Select
-                      value={formData.tipo || ""}
-                      onValueChange={(value) =>
-                        handleInputChange("tipo", value)
+                    <Label htmlFor="zona_cuerpo">Zona del Cuerpo</Label>
+                    <Input
+                      id="zona_cuerpo"
+                      value={formData.zona_cuerpo || ""}
+                      onChange={(e) =>
+                        handleInputChange("zona_cuerpo", e.target.value)
                       }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccione el tipo de comida" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="desayuno">Desayuno</SelectItem>
-                        <SelectItem value="almuerzo">Almuerzo</SelectItem>
-                        <SelectItem value="cena">Cena</SelectItem>
-                        <SelectItem value="snack">Snack</SelectItem>
-                        <SelectItem value="bebida">Bebida</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    />
                   </div>
                 </div>
               )}
 
-              {/* Parámetros específicos de Hospedaje */}
-              {productType === "hospedaje" && (
+              {/* Parámetros específicos de Imagen */}
+              {servicioType === "imagen" && (
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">
-                    Información de Hospedaje
+                    Información de Imagen
                   </h3>
-
                   <div className="space-y-2">
-                    <Label>Fecha de Inicio</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full justify-start text-left font-normal"
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {formData.fecha_inicio
-                            ? format(formData.fecha_inicio, "PPP")
-                            : "Seleccionar fecha"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={formData.fecha_inicio}
-                          onSelect={(date) =>
-                            handleInputChange("fecha_inicio", date)
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Fecha de Fin</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full justify-start text-left font-normal"
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {formData.fecha_fin
-                            ? format(formData.fecha_fin, "PPP")
-                            : "Seleccionar fecha"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={formData.fecha_fin}
-                          onSelect={(date) =>
-                            handleInputChange("fecha_fin", date)
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <Label htmlFor="zona_cuerpo">Zona del Cuerpo</Label>
+                    <Input
+                      id="zona_cuerpo"
+                      value={formData.zona_cuerpo || ""}
+                      onChange={(e) =>
+                        handleInputChange("zona_cuerpo", e.target.value)
+                      }
+                    />
                   </div>
                 </div>
               )}
 
-              <Button type="submit" className="w-full" disabled={!productType}>
+              {/* Parámetros específicos de Atención */}
+              {servicioType === "atencion" && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">
+                    Información de Atención
+                  </h3>
+                  <div className="space-y-2">
+                    <Label htmlFor="medico_asignado">Médico Asignado</Label>
+                    <Input
+                      id="medico_asignado"
+                      value={formData.medico_asignado || ""}
+                      onChange={(e) =>
+                        handleInputChange("medico_asignado", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Parámetros específicos de Procedimiento */}
+              {servicioType === "procedimiento" && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">
+                    Información de Procedimiento
+                  </h3>
+                  <div className="space-y-2">
+                    <Label htmlFor="procedimiento">Procedimiento</Label>
+                    <Input
+                      id="procedimiento"
+                      value={formData.procedimiento || ""}
+                      onChange={(e) =>
+                        handleInputChange("procedimiento", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="medico_asignado">Médico Asignado</Label>
+                    <Input
+                      id="medico_asignado"
+                      value={formData.medico_asignado || ""}
+                      onChange={(e) =>
+                        handleInputChange("medico_asignado", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Parámetros específicos de Suministro */}
+              {servicioType === "suministro" && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">
+                    Información de Suministro
+                  </h3>
+                  <div className="space-y-2">
+                    <Label htmlFor="tipo_suministro">Tipo de Suministro</Label>
+                    <Input
+                      id="tipo_suministro"
+                      value={formData.tipo_suministro || ""}
+                      onChange={(e) =>
+                        handleInputChange("tipo_suministro", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Mensaje de éxito al enviar */}
+              {submitted && (
+                <div className="text-green-600 font-semibold text-center">
+                  ¡Producto creado correctamente!
+                </div>
+              )}
+
+              {/* Botón submit usando Button de shadcn */}
+              <Button type="submit" className="w-full" disabled={!servicioType}>
                 Crear Producto
               </Button>
             </form>
