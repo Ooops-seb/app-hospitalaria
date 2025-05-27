@@ -16,5 +16,5 @@ export class CreateAtencionMedicaDto {
 
   @ApiProperty({ example: 'Dr. Juan Pérez' })
   @IsString()
-  medico_acargo: string;
+  medico_asignado: string;
 }

@@ -16,7 +16,7 @@ export class CreateProcedimientoMedicoDto {
 
   @ApiProperty({ example: 'Dra. María López' })
   @IsString()
-  medico_acargo: string;
+  medico_asignado: string;
 
   @ApiProperty({ example: 'Apendicectomía' })
   @IsString()
