@@ -1,43 +1,38 @@
 import api from "@/lib/api";
 
-export type ProductType = "comida" | "hospedaje" | "";
-
-export interface ProductFormData {
-  descripcion: string;
-  precio: number;
-  valor_nutritivo?: string;
-  tipo?: string;
-  fecha_inicio?: Date;
-  fecha_fin?: Date;
+export interface LineaDescargo {
+  servicio_id?: number;
+  producto_id?: number;
+  nota_venta: string;
 }
 
-export interface ProductList {
-  id: number;
-  descripcion: string;
-  precio: number;
-  valor_nutritivo?: null | string;
-  tipo?: string;
-  tipo_producto: TipoProducto;
-  fecha_ingreso?: Date;
-  fecha_salida?: Date;
+export interface DescargoFormData {
+  fecha: string;
+  direccion: string;
+  cliente: string;
+  paciente_id: number;
+  lineas: LineaDescargo[];
 }
 
-export const crearProductoComida = async (data: ProductFormData) => {
-  const response = await api.post("/productos/comida", data);
+export const actualizarDescargo = async (
+  id: number,
+  data: DescargoFormData,
+) => {
+  const response = await api.patch(`/documentos/descargo/${id}`, data);
   return response.data;
 };
 
-export const crearProductoHospedaje = async (data: ProductFormData) => {
-  const response = await api.post("/productos/hospedaje", data);
+export const crearDescargo = async (data: DescargoFormData) => {
+  const response = await api.post("/documentos/descargo", data);
   return response.data;
 };
 
-export const obtenerProductos = async (): Promise<ProductList[]> => {
-  const response = await api.get("/productos/list");
+export const obtenerDescargos = async () => {
+  const response = await api.get("/documentos/descargo");
   return response.data;
 };
 
-export enum TipoProducto {
-  Comida = "comida",
-  Hospedaje = "hospedaje",
-}
+export const obtenerDescargosById = async (id: number) => {
+  const response = await api.get(`/documentos/descargo/${id}`);
+  return response.data;
+};

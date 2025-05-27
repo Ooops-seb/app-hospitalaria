@@ -3,7 +3,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/shadcn/ui/button";
 import {
   Card,
@@ -31,125 +31,13 @@ import {
   PopoverTrigger,
 } from "@/components/shadcn/ui/popover";
 import { Badge } from "@/components/shadcn/ui/badge";
-
-// Tipos de servicios disponibles
-const SERVICIOS = [
-  {
-    id: 1,
-    registro: "2024-05-20",
-    descripcion: "Hemograma completo",
-    precio: 18.5,
-    estado: "default",
-    tipo_examen: "Sangre",
-    tipo_servicio: "examen",
-  },
-  {
-    id: 2,
-    registro: "2024-05-20",
-    descripcion: "Radiografía de tórax",
-    precio: 50,
-    estado: "default",
-    zona_cuerpo: "Tórax",
-    tipo_servicio: "imagen",
-  },
-  {
-    id: 4,
-    registro: "2024-05-20",
-    descripcion: "Consulta médica general",
-    precio: 30,
-    estado: "default",
-    medico_asignado: null,
-    tipo_servicio: "atencion",
-  },
-  {
-    id: 6,
-    registro: "2024-05-19",
-    descripcion: "Cirugía menor ambulatoria",
-    precio: 300,
-    estado: "default",
-    medico_asignado: null,
-    procedimiento: "Apendicectomía",
-    tipo_servicio: "procedimiento",
-  },
-  {
-    id: 8,
-    registro: "2024-05-20",
-    descripcion: "Administración de insulina",
-    precio: 12,
-    estado: "default",
-    tipo_suministro: "Insulina subcutánea",
-    tipo_servicio: "suministro",
-  },
-  {
-    id: 10,
-    registro: "2024-05-20",
-    descripcion: "Hemograma completo",
-    precio: 18.5,
-    estado: "default",
-    tipo_examen: "Sangre",
-    tipo_servicio: "examen",
-  },
-  {
-    id: 12,
-    registro: "2025-05-27",
-    descripcion: "Análisis especializado",
-    precio: 20,
-    estado: "default",
-    tipo_suministro: "Material médico",
-    tipo_servicio: "suministro",
-  },
-];
-
-// Pacientes disponibles
-const PACIENTES = [
-  {
-    id: 1,
-    nombres: "Juan",
-    apellidos: "Pérez",
-    cedula: "1234567890",
-    fecha_nacimiento: "1990-01-01",
-    telefono: "0998765432",
-  },
-  {
-    id: 2,
-    nombres: "María",
-    apellidos: "González",
-    cedula: "0987654321",
-    fecha_nacimiento: "1985-05-15",
-    telefono: "0987654321",
-  },
-  {
-    id: 3,
-    nombres: "Carlos",
-    apellidos: "Rodríguez",
-    cedula: "1122334455",
-    fecha_nacimiento: "1978-12-20",
-    telefono: "0976543210",
-  },
-  {
-    id: 4,
-    nombres: "Ana",
-    apellidos: "Martínez",
-    cedula: "5566778899",
-    fecha_nacimiento: "1992-08-10",
-    telefono: "0965432109",
-  },
-];
-
-interface LineaDescargo {
-  servicio_id?: number;
-  producto_id?: number;
-  cantidad: number;
-  nota_venta: string;
-}
-
-interface DescargoFormData {
-  fecha: string;
-  direccion: string;
-  cliente: string;
-  paciente_id: number;
-  lineas: LineaDescargo[];
-}
+import { obtenerPacientes } from "@/lib/api/pacientes";
+import { obtenerServicios } from "@/lib/api/servicios";
+import { obtenerProductos } from "@/lib/api/producto";
+import { DescargoFormData, LineaDescargo } from "@/lib/api/descargos";
+import { obtenerDescargosById, actualizarDescargo } from "@/lib/api/descargos";
+import { toast } from "react-hot-toast";
+import { useParams, useRouter } from "next/navigation";
 
 const getServiceTypeColor = (tipo: string) => {
   const colors = {
@@ -180,6 +68,10 @@ const calculateAge = (fechaNacimiento: string) => {
 };
 
 export default function DescargoForm() {
+  const params = useParams();
+  const router = useRouter();
+  const descargoId = Number(params.id);
+
   const [formData, setFormData] = useState<DescargoFormData>({
     fecha: format(new Date(), "yyyy-MM-dd"),
     direccion: "",
@@ -189,6 +81,82 @@ export default function DescargoForm() {
   });
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [pacientes, setPacientes] = useState<any[]>([]);
+  const [pacientesLoading, setPacientesLoading] = useState(true);
+  const [servicios, setServicios] = useState<any[]>([]);
+  const [serviciosLoading, setServiciosLoading] = useState(true);
+  const [productos, setProductos] = useState<any[]>([]);
+  const [productosLoading, setProductosLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchPacientes = async () => {
+      try {
+        const data = await obtenerPacientes();
+        setPacientes(data);
+      } catch (error) {
+        console.error("Error al cargar pacientes", error);
+      } finally {
+        setPacientesLoading(false);
+      }
+    };
+    fetchPacientes();
+  }, []);
+
+  useEffect(() => {
+    const fetchServicios = async () => {
+      try {
+        const data = await obtenerServicios();
+        setServicios(data.filter((s: any) => s.tipo_servicio !== "servicio"));
+      } catch (error) {
+        console.error("Error al cargar servicios", error);
+      } finally {
+        setServiciosLoading(false);
+      }
+    };
+    fetchServicios();
+  }, []);
+
+  useEffect(() => {
+    const fetchProductos = async () => {
+      try {
+        const data = await obtenerProductos();
+        setProductos(data);
+      } catch (error) {
+        console.error("Error al cargar productos", error);
+      } finally {
+        setProductosLoading(false);
+      }
+    };
+    fetchProductos();
+  }, []);
+
+  // Fetch descargo data by ID and pre-fill form
+  useEffect(() => {
+    if (!descargoId || isNaN(descargoId)) return;
+    setLoading(true);
+    obtenerDescargosById(descargoId)
+      .then((data) => {
+        setFormData({
+          fecha: data.fecha?.slice(0, 10) || format(new Date(), "yyyy-MM-dd"),
+          direccion: data.direccion || "",
+          cliente: data.cliente || "",
+          paciente_id: data.paciente?.id || data.paciente_id || 0,
+          lineas: (data.lineas || []).map((l: any) => ({
+            servicio_id: l.servicio?.id || l.servicio_id,
+            producto_id: l.producto?.id || l.producto_id,
+            nota_venta: l.nota_venta || "",
+          })),
+        });
+        setSelectedDate(data.fecha ? new Date(data.fecha) : new Date());
+      })
+      .catch((err) => {
+        toast.error("Error al cargar descargo");
+        console.error(err);
+      })
+      .finally(() => setLoading(false));
+  }, [descargoId]);
 
   const handleInputChange = (
     field: keyof Omit<DescargoFormData, "lineas">,
@@ -203,7 +171,7 @@ export default function DescargoForm() {
   const addLinea = () => {
     setFormData((prev) => ({
       ...prev,
-      lineas: [...prev.lineas, { cantidad: 1, nota_venta: "" }],
+      lineas: [...prev.lineas, { nota_venta: "" }],
     }));
   };
 
@@ -228,33 +196,51 @@ export default function DescargoForm() {
   };
 
   const getSelectedService = (servicioId: number) => {
-    return SERVICIOS.find((s) => s.id === servicioId);
+    return servicios.find((s) => s.id === servicioId);
   };
 
   const calculateTotal = () => {
     return formData.lineas.reduce((total, linea) => {
+      let subtotal = 0;
       if (linea.servicio_id) {
         const servicio = getSelectedService(linea.servicio_id);
-        return total + (servicio ? servicio.precio * linea.cantidad : 0);
+        subtotal += servicio ? servicio.precio : 0;
       }
-      return total;
+      if (linea.producto_id) {
+        const producto = productos.find((p) => p.id === linea.producto_id);
+        subtotal += producto ? producto.precio : 0;
+      }
+      return total + subtotal;
     }, 0);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Descargo creado:", formData);
-    alert("Descargo creado exitosamente!");
+    setSubmitting(true);
+    try {
+      await actualizarDescargo(descargoId, formData);
+      toast.success("Descargo actualizado correctamente");
+      // Opcional: redirigir a la lista o detalle
+      router.push("/platform/descargos");
+    } catch (error) {
+      toast.error("Error al actualizar descargo");
+      console.error("Error al actualizar descargo:", error);
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  if (loading) {
+    return <div className="p-8 text-center">Cargando descargo...</div>;
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6">
       <Card>
         <CardHeader>
-          <CardTitle>Crear Descargo Médico</CardTitle>
+          <CardTitle>Editar Descargo Médico</CardTitle>
           <CardDescription>
-            Complete la información del descargo y agregue los servicios
-            correspondientes
+            Modifique la información del descargo y sus servicios/productos
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -299,12 +285,19 @@ export default function DescargoForm() {
                   onValueChange={(value) =>
                     handleInputChange("paciente_id", Number.parseInt(value))
                   }
+                  disabled={pacientesLoading}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar paciente" />
+                    <SelectValue
+                      placeholder={
+                        pacientesLoading
+                          ? "Cargando pacientes..."
+                          : "Seleccionar paciente"
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    {PACIENTES.map((paciente) => (
+                    {pacientes.map((paciente) => (
                       <SelectItem
                         key={paciente.id}
                         value={paciente.id.toString()}
@@ -352,7 +345,7 @@ export default function DescargoForm() {
             {/* Líneas de Descargo */}
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold">Servicios</h3>
+                <h3 className="text-lg font-semibold">Linea de Descargos</h3>
                 <Button
                   type="button"
                   onClick={addLinea}
@@ -360,7 +353,7 @@ export default function DescargoForm() {
                   size="sm"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Agregar Servicio
+                  Agregar Linea de Descargo
                 </Button>
               </div>
 
@@ -375,12 +368,15 @@ export default function DescargoForm() {
                 const selectedService = linea.servicio_id
                   ? getSelectedService(linea.servicio_id)
                   : null;
+                const selectedProduct = linea.producto_id
+                  ? productos.find((p) => p.id === linea.producto_id)
+                  : null;
 
                 return (
                   <Card key={index} className="p-4">
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                       <div className="md:col-span-5 space-y-2">
-                        <Label>Servicio *</Label>
+                        <Label>Servicio</Label>
                         <Select
                           value={linea.servicio_id?.toString() || ""}
                           onValueChange={(value) =>
@@ -390,12 +386,19 @@ export default function DescargoForm() {
                               Number.parseInt(value),
                             )
                           }
+                          disabled={serviciosLoading}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Seleccionar servicio" />
+                            <SelectValue
+                              placeholder={
+                                serviciosLoading
+                                  ? "Cargando servicios..."
+                                  : "Seleccionar servicio"
+                              }
+                            />
                           </SelectTrigger>
                           <SelectContent>
-                            {SERVICIOS.map((servicio) => (
+                            {servicios.map((servicio) => (
                               <SelectItem
                                 key={servicio.id}
                                 value={servicio.id.toString()}
@@ -417,28 +420,49 @@ export default function DescargoForm() {
                             ))}
                           </SelectContent>
                         </Select>
-                        {selectedService && (
-                          <div className="text-sm text-gray-600">
-                            Precio unitario: ${selectedService.precio}
-                          </div>
-                        )}
                       </div>
 
-                      <div className="md:col-span-2 space-y-2">
-                        <Label>Cantidad *</Label>
-                        <Input
-                          type="number"
-                          min="1"
-                          value={linea.cantidad}
-                          onChange={(e) =>
+                      <div className="md:col-span-5 space-y-2">
+                        <Label>Producto</Label>
+                        <Select
+                          value={linea.producto_id?.toString() || ""}
+                          onValueChange={(value) =>
                             updateLinea(
                               index,
-                              "cantidad",
-                              Number.parseInt(e.target.value) || 1,
+                              "producto_id",
+                              Number.parseInt(value),
                             )
                           }
-                          required
-                        />
+                          disabled={productosLoading}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={
+                                productosLoading
+                                  ? "Cargando productos..."
+                                  : "Seleccionar producto"
+                              }
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {productos.map((producto) => (
+                              <SelectItem
+                                key={producto.id}
+                                value={producto.id.toString()}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <Badge className="bg-orange-100 text-orange-800">
+                                    {producto.tipo_producto}
+                                  </Badge>
+                                  <span>{producto.descripcion}</span>
+                                  <span className="text-sm text-gray-500">
+                                    ${producto.precio}
+                                  </span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
 
                       <div className="md:col-span-4 space-y-2">
@@ -466,13 +490,24 @@ export default function DescargoForm() {
                       </div>
                     </div>
 
-                    {selectedService && (
+                    {(selectedService || selectedProduct) && (
                       <div className="mt-3 pt-3 border-t flex justify-between text-sm">
-                        <span>Subtotal:</span>
-                        <span className="font-semibold">
-                          $
-                          {(selectedService.precio * linea.cantidad).toFixed(2)}
-                        </span>
+                        {selectedService && (
+                          <>
+                            <span>Precio servicio:</span>
+                            <span className="font-semibold">
+                              ${selectedService.precio.toFixed(2)}
+                            </span>
+                          </>
+                        )}
+                        {selectedProduct && (
+                          <>
+                            <span>Precio producto:</span>
+                            <span className="font-semibold">
+                              ${selectedProduct.precio.toFixed(2)}
+                            </span>
+                          </>
+                        )}
                       </div>
                     )}
                   </Card>
@@ -484,7 +519,7 @@ export default function DescargoForm() {
             {formData.lineas.length > 0 && (
               <Card className="p-4 bg-gray-50">
                 <div className="flex justify-between items-center text-lg font-semibold">
-                  <span>Total General:</span>
+                  <span>Total aproximado:</span>
                   <span>${calculateTotal().toFixed(2)}</span>
                 </div>
               </Card>
@@ -493,9 +528,9 @@ export default function DescargoForm() {
             <Button
               type="submit"
               className="w-full"
-              disabled={formData.lineas.length === 0}
+              disabled={formData.lineas.length === 0 || submitting}
             >
-              Crear Descargo
+              {submitting ? "Actualizando..." : "Actualizar Descargo"}
             </Button>
           </form>
         </CardContent>
