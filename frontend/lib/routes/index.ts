@@ -61,14 +61,14 @@ export const appRoutes: AppRouter[] = mapRoutesWithUrls([
     isDroppable: false,
     routes: [
       {
-        title: "Lista",
-        icon: LayoutDashboard,
-        url: "/facturas/lista",
-      },
-      {
         title: "Crear",
         icon: LayoutDashboard,
         url: "/facturas/crear",
+      },
+      {
+        title: "Lista",
+        icon: LayoutDashboard,
+        url: "/facturas",
       },
     ],
   },
@@ -77,14 +77,14 @@ export const appRoutes: AppRouter[] = mapRoutesWithUrls([
     isDroppable: false,
     routes: [
       {
-        title: "Lista",
-        icon: LayoutDashboard,
-        url: "/descargos",
-      },
-      {
         title: "Crear",
         icon: LayoutDashboard,
         url: "/descargos/crear",
+      },
+      {
+        title: "Lista",
+        icon: LayoutDashboard,
+        url: "/descargos",
       },
     ],
   },
@@ -93,14 +93,14 @@ export const appRoutes: AppRouter[] = mapRoutesWithUrls([
     isDroppable: false,
     routes: [
       {
-        title: "Lista",
-        icon: LayoutDashboard,
-        url: "/paciente/lista",
-      },
-      {
         title: "Crear",
         icon: LayoutDashboard,
         url: "/paciente/crear",
+      },
+      {
+        title: "Lista",
+        icon: LayoutDashboard,
+        url: "/paciente",
       },
     ],
   },
@@ -109,14 +109,14 @@ export const appRoutes: AppRouter[] = mapRoutesWithUrls([
     isDroppable: false,
     routes: [
       {
-        title: "Lista",
-        icon: LayoutDashboard,
-        url: "/servicios",
-      },
-      {
         title: "Crear",
         icon: LayoutDashboard,
         url: "/servicios/crear",
+      },
+      {
+        title: "Lista",
+        icon: LayoutDashboard,
+        url: "/servicios",
       },
     ],
   },

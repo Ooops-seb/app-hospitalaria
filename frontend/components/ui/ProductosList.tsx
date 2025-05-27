@@ -1,6 +1,5 @@
 "use client";
 
-import { useComidas } from "@/hooks/useProducto/useComidas";
 import {
   Table,
   TableHeader,
@@ -9,12 +8,13 @@ import {
   TableRow,
   TableCell,
 } from "@/components/shadcn/ui/table";
+import { useProductos } from "@/hooks/useProducto/useProductos";
 
-export default function ComidaList() {
-  const { comidas, loading } = useComidas();
+export default function ProductosList() {
+  const { productos, loading } = useProductos();
 
   if (loading) return <p>Cargando productos...</p>;
-  if (!comidas.length) return <p>No hay productos registrados.</p>;
+  if (!productos.length) return <p>No hay productos registrados.</p>;
 
   return (
     <div className="p-4">
@@ -30,7 +30,7 @@ export default function ComidaList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {[...comidas]
+          {[...productos]
             .sort((a, b) => a.id - b.id)
             .map((item) => (
               <TableRow key={item.id}>
